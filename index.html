@@ -19,13 +19,17 @@
     nav a {
         color: #66fcf1;
         text-decoration: none;
-        margin: 0 20px;
+        margin: 0 15px; /* Điều chỉnh lại khoảng cách để vừa thêm nút Bán hàng */
         font-weight: bold;
-        font-size: 18px;
+        font-size: 17px;
         transition: 0.3s;
     }
     nav a:hover {
         color: #45f3ff;
+    }
+    /* Làm nổi bật nút Bán Hàng */
+    nav a.shop-btn {
+        color: #ffeb3b;
     }
     
     .container { max-width: 1300px; margin: 30px auto; padding: 0 20px; box-sizing: border-box; text-align: center; }
@@ -34,13 +38,14 @@
 </head>
 <body>
 
-    <!-- THANH MENU (Đã liên kết mục Xem phim sang file phim.html) -->
+    <!-- THANH MENU MỚI: ĐÃ THÊM MỤC BÁN HÀNG -->
     <nav>
         <a href="#">Mini Game</a>
         <a href="#">Nhà đất</a>
         <a href="#">Tin tức</a>
         <a href="#">Công cụ</a>
         <a href="phim.html">Xem phim</a>
+        <a href="banhang.html" class="shop-btn">🛍️ Bán hàng</a>
     </nav>
 
     <div class="container">
