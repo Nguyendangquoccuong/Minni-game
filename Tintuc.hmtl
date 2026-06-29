@@ -1,17 +1,41 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Tin tức</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Tin tức</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <h1>📰 Tin tức</h1>
 
-<p>Đây là trang Tin tức của MINNI WORLD.</p>
+<div id="news">Đang tải...</div>
 
-<p><a href="index.html">⬅️ Về trang chủ</a></p>
+<p><a href="index.html">⬅ Về trang chủ</a></p>
+
+<script>
+const API_KEY = "67ba9764eae5943391b48d96ae3c5786";
+
+fetch(`https://gnews.io/api/v4/top-headlines?lang=vi&country=vn&max=10&apikey=${API_KEY}`)
+.then(res => res.json())
+.then(data => {
+    const news = document.getElementById("news");
+    news.innerHTML = "";
+
+    data.articles.forEach(article => {
+        news.innerHTML += `
+        <div style="margin-bottom:20px;border-bottom:1px solid #ccc;padding:10px;">
+            <h3>${article.title}</h3>
+            <p>${article.description || ""}</p>
+            <a href="${article.url}" target="_blank">Đọc thêm</a>
+        </div>
+        `;
+    });
+})
+.catch(() => {
+    document.getElementById("news").innerHTML = "Không tải được tin tức.";
+});
+</script>
 
 </body>
 </html>
