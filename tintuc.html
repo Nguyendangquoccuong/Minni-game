@@ -10,55 +10,33 @@
 
 <h1 style="color: #fff; text-align: center; padding-top: 20px;">📰 Tin tức mới</h1>
 
-<!-- Khung chứa tin tức được định dạng lại để nổi bật trên nền xanh -->
+<!-- Khung chứa danh sách tin tức cố định, không lo lỗi mạng -->
 <div id="news" style="max-width: 600px; margin: 20px auto; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; color: #333;">
-    Đang tải tin tức...
+
+    <!-- Tin số 1 -->
+    <div style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
+        <h3 style="margin-top: 0; color: #0056b3; font-size: 1.2rem;">Chào mừng bạn đến với thế giới giải trí Minni World</h3>
+        <p style="font-size: 0.95rem; line-height: 1.4; color: #444;">Trang web tích hợp các tính năng giải trí hấp dẫn bao gồm Mini Game giải trí, chuyên mục Nhà đất, cập nhật Tin tức công nghệ đời sống và các Công cụ tiện ích hữu ích cho mọi người...</p>
+        <a href="index.html" style="color: #ff5722; font-weight: bold; text-decoration: none;">Xem chi tiết ➔</a>
+    </div>
+
+    <!-- Tin số 2 -->
+    <div style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
+        <h3 style="margin-top: 0; color: #0056b3; font-size: 1.2rem;">Ra mắt tính năng Mini Game phiên bản mới cực hay</h3>
+        <p style="font-size: 0.95rem; line-height: 1.4; color: #444;">Hệ thống trò chơi nhỏ (Mini Game) trên website vừa cập nhật giao diện mới mượt mà hơn, giúp người chơi có những phút giây thư giãn tuyệt vời ngay trên điện thoại di động...</p>
+        <a href="mini-game.html" style="color: #ff5722; font-weight: bold; text-decoration: none;">Chơi ngay ➔</a>
+    </div>
+
+    <!-- Tin số 3 -->
+    <div style="margin-bottom: 10px; padding-bottom: 5px;">
+        <h3 style="margin-top: 0; color: #0056b3; font-size: 1.2rem;">Cập nhật chuyên mục Công cụ hỗ trợ học tập và làm việc</h3>
+        <p style="font-size: 0.95rem; line-height: 1.4; color: #444;">Chuyên mục Công cụ đang được hoàn thiện để mang đến các tiện ích tính toán nhanh, hỗ trợ đắc lực cho người dùng trong quá trình trải nghiệm hệ sinh thái Minni World...</p>
+        <a href="congcu.html" style="color: #ff5722; font-weight: bold; text-decoration: none;">Khám phá ➔</a>
+    </div>
+
 </div>
 
 <p style="text-align: center;"><a href="index.html" style="color: #fff; font-weight: bold; text-decoration: none;">⬅ Về trang chủ</a></p>
-
-<script>
-// Sử dụng API rss2json giúp chuyển đổi trực tiếp dữ liệu RSS của VnExpress sang JSON siêu nhanh và không bị lỗi CORS
-const API_URL = "https://rss2json.com" + encodeURIComponent("https://vnexpress.net");
-
-fetch(API_URL)
-.then(response => {
-    if (!response.ok) throw new Error("Không thể kết nối API");
-    return response.json();
-})
-.then(data => {
-    const newsContainer = document.getElementById("news");
-    
-    if (data.status !== "ok" || !data.items || data.items.length === 0) {
-        newsContainer.innerHTML = "Không tìm thấy bài viết nào.";
-        return;
-    }
-
-    newsContainer.innerHTML = ""; // Xóa dòng chữ đang tải
-
-    // Lấy tối đa 10 bài viết mới nhất
-    data.items.forEach((item, index) => {
-        if (index >= 10) return;
-
-        const title = item.title;
-        const link = item.link;
-        
-        // Loại bỏ thẻ HTML thừa nếu có trong phần mô tả
-        let desc = item.description.replace(/<[^>]+>/g, "").substring(0, 150);
-
-        newsContainer.innerHTML += `
-        <div style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
-            <h3 style="margin-top: 0; color: #0056b3; font-size: 1.2rem;">${title}</h3>
-            <p style="font-size: 0.95rem; line-height: 1.4; color: #444;">${desc}...</p>
-            <a href="${link}" target="_blank" style="color: #ff5722; font-weight: bold; text-decoration: none;">Đọc tiếp ➔</a>
-        </div>`;
-    });
-})
-.catch(err => {
-    console.error(err);
-    document.getElementById("news").innerHTML = "Không tải được tin tức do lỗi mạng. Vui lòng thử lại sau.";
-});
-</script>
 
 </body>
 </html>
