@@ -3,239 +3,223 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Kho Mini Game - Minni World</title>
+<title>Mini Game Xe Tăng Pro</title>
 <style>
     body {
-        margin: 0; padding: 0; background-color: #222; color: white;
-        font-family: Arial, sans-serif; overflow: hidden; text-align: center; user-select: none;
+        margin: 0; padding: 0; background-color: #1a1a1a; color: white;
+        font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; text-align: center; user-select: none;
     }
-    /* Giao diện Menu Chọn Game */
-    #menuContainer {
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-        height: 100vh; background: linear-gradient(135deg, #1d2671, #c33764);
+    .info { padding: 12px; font-size: 22px; font-weight: bold; background: #111; border-bottom: 2px solid #444; }
+    #gameCanvas { background-color: #252525; display: block; margin: 0 auto; }
+    
+    /* Giao diện nút bấm điều khiển trên điện thoại */
+    .controls {
+        display: flex; justify-content: space-around; align-items: center;
+        padding: 15px 10px; background: #111; height: 80px; box-sizing: border-box;
     }
-    .menu-title { font-size: 28px; margin-bottom: 30px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-    .game-btn {
-        width: 80%; max-width: 300px; padding: 15px; margin: 10px 0;
-        font-size: 18px; font-weight: bold; border: none; border-radius: 25px;
-        cursor: pointer; color: white; transition: 0.2s; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    .btn-ctrl {
+        width: 35%; height: 55px; background-color: #333; border: 2px solid #666;
+        color: white; font-size: 24px; font-weight: bold; border-radius: 12px;
+        active { background-color: #555; }
     }
-    .btn-tank { background-color: #4CAF50; }
-    .btn-catch { background-color: #FF9800; }
-    .btn-pop { background-color: #00BCD4; }
-    .btn-back-home {
-        background: none; border: 2px solid white; color: white; margin-top: 20px; font-size: 15px; padding: 8px 20px; text-decoration: none; border-radius: 5px;
-    }
-
-    /* Giao diện vùng chơi Game */
-    #gameContainer { display: none; position: relative; width: 100vw; height: 100vh; }
-    #gameCanvas { background-color: #333; display: block; margin: 0 auto; }
-    .info { padding: 10px; font-size: 20px; font-weight: bold; background-color: #111; }
-    .btn-back-menu {
-        position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-        padding: 10px 20px; background-color: #e91e63; color: white;
-        border: none; border-radius: 5px; font-size: 16px; font-weight: bold; z-index: 10;
+    .btn-back {
+        display: inline-block; padding: 10px 20px; background-color: #ff5722;
+        color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 5px;
     }
 </style>
 </head>
 <body>
 
-<!-- CHUYÊN MỤC 1: MENU CHỌN GAME -->
-<div id="menuContainer">
-    <div class="menu-title">🎮 KHO MINI GAME 🎮</div>
-    <button class="game-btn btn-tank" onclick="startGame('tank')">🚀 Bắn Xe Tăng</button>
-    <button class="game-btn btn-catch" onclick="startGame('catch')">🍎 Hứng Quả Ngọt</button>
-    <button class="game-btn btn-pop" onclick="startGame('pop')">🎈 Đập Bong Bóng</button>
-    <a href="index.html" class="btn-back-home">⬅ Về Trang Chủ Chính</a>
+<div class="info">Điểm: <span id="score">0</span> | Cấp độ: <span id="level">1</span></div>
+<canvas id="gameCanvas"></canvas>
+
+<!-- Bộ nút điều khiển di chuyển trái phải -->
+<div class="controls">
+    <button class="btn-ctrl" id="btnLeft">◀ TRÁI</button>
+    <button class="btn-ctrl" id="btnRight">PHẢI ▶</button>
 </div>
 
-<!-- CHUYÊN MỤC 2: KHUNG CHƠI GAME TỰ ĐỘNG CHUYỂN ĐỔI -->
-<div id="gameContainer">
-    <div class="info">Điểm: <span id="score">0</span></div>
-    <canvas id="gameCanvas"></canvas>
-    <button class="btn-back-menu" onclick="backToMenu()">⬅ Thoát Ra Menu</button>
-</div>
+<div style="padding: 5px; font-size: 13px; color: #888;">Chạm vùng trống phía trên để BẮN ĐẠN!</div>
+<a href="index.html" class="btn-back">⬅ Về trang chủ</a>
 
 <script>
-const menuContainer = document.getElementById("menuContainer");
-const gameContainer = document.getElementById("gameContainer");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreEl = document.getElementById("score");
+const levelEl = document.getElementById("level");
+
+// Cấu hình kích thước chuẩn điện thoại
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 190;
 
 let score = 0;
+let level = 1;
 let gameOver = false;
-let currentGame = "";
-let animationFrameId;
 
-// Thiết lập kích thước màn hình
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 130;
+// Xe tăng có thể di chuyển trục X
+const player = {
+    x: canvas.width / 2 - 20,
+    y: canvas.height - 60,
+    width: 40,
+    height: 40,
+    color: "#4CAF50",
+    speed: 6
+};
 
-// Các biến phục vụ cấu trúc vật lý của từng Game
-let player, bullets, enemies, enemySpeed, spawnTimer; // Game Xe Tăng
-let basket, fruits; // Game Hứng Quả
-let balloons; // Game Bong Bóng
+let bullets = [];
+let enemies = [];
+let particles = []; // Chứa hiệu ứng nổ tung
+let enemySpeed = 1.8;
+let spawnTimer = 0;
+let moveLeft = false;
+let moveRight = false;
 
-// Lắng nghe thao tác Chạm/Bấm của người chơi
-window.addEventListener("pointerdown", function(e) {
-    if (e.target.className === "btn-back-menu") return;
-    
+// Đón nhận thao tác bấm nút di chuyển
+document.getElementById("btnLeft").addEventListener("pointerdown", () => moveLeft = true);
+document.getElementById("btnLeft").addEventListener("pointerup", () => moveLeft = false);
+document.getElementById("btnRight").addEventListener("pointerdown", () => moveRight = true);
+document.getElementById("btnRight").addEventListener("pointerup", () => moveRight = false);
+
+// Chạm vào vùng màn hình game để bắn đạn
+canvas.addEventListener("pointerdown", function(e) {
     if (gameOver) {
         resetGame();
         return;
     }
 
-    if (currentGame === "tank") {
+    // Nếu điểm >= 50: Kích hoạt ĐẠN ĐÔI (Laser) cực mạnh
+    if (score >= 50) {
+        bullets.push({ x: player.x + 4, y: player.y, width: 6, height: 18, color: "#00E676", speed: 9 });
+        bullets.push({ x: player.x + player.width - 10, y: player.y, width: 6, height: 18, color: "#00E676", speed: 9 });
+    } else {
+        // Đạn đơn thông thường
         bullets.push({ x: player.x + player.width / 2 - 4, y: player.y, width: 8, height: 15, color: "#FFEA00", speed: 8 });
-    } 
-    else if (currentGame === "catch") {
-        // Game hứng quả: Chạm bên trái màn hình sang trái, chạm bên phải sang phải
-        if (e.clientX < window.innerWidth / 2) {
-            basket.x -= 35; if (basket.x < 0) basket.x = 0;
-        } else {
-            basket.x += 35; if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
-        }
-    }
-    else if (currentGame === "pop") {
-        // Game Đập Bong bóng: Kiểm tra xem người chơi bấm trúng quả bóng nào
-        balloons.forEach((b, index) => {
-            let dist = Math.hypot(e.clientX - b.x, (e.clientY - 60) - b.y);
-            if (dist < b.radius) {
-                balloons.splice(index, 1);
-                score += 5;
-                scoreEl.innerText = score;
-            }
-        });
     }
 });
 
-// Hàm khởi chạy trò chơi được chọn từ Menu
-function startGame(gameType) {
-    currentGame = gameType;
-    menuContainer.style.display = "none";
-    gameContainer.style.display = "block";
-    resetGame();
-}
-
-function backToMenu() {
-    cancelAnimationFrame(animationFrameId);
-    currentGame = "";
-    gameContainer.style.display = "none";
-    menuContainer.style.display = "flex";
+// Hàm tạo hiệu ứng nổ hoa cải
+function createExplosion(x, y) {
+    for (let i = 0; i < 12; i++) {
+        particles.push({
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 6,
+            vy: (Math.random() - 0.5) * 6,
+            radius: Math.random() * 3 + 2,
+            color: Math.random() > 0.5 ? "#FF5722" : "#FFCC00",
+            alpha: 1
+        });
+    }
 }
 
 function resetGame() {
-    score = 0;
-    scoreEl.innerText = score;
+    score = 0; level = 1; enemySpeed = 1.8;
+    scoreEl.innerText = score; levelEl.innerText = level;
+    bullets = []; enemies = []; particles = [];
+    player.x = canvas.width / 2 - 20;
     gameOver = false;
-    spawnTimer = 0;
-
-    if (currentGame === "tank") {
-        player = { x: canvas.width / 2 - 20, y: canvas.height - 50, width: 40, height: 40, color: "#4CAF50" };
-        bullets = []; enemies = []; enemySpeed = 2;
-    } 
-    else if (currentGame === "catch") {
-        basket = { x: canvas.width / 2 - 40, y: canvas.height - 30, width: 80, height: 20, color: "#FF9800" };
-        fruits = []; enemySpeed = 3;
-    }
-    else if (currentGame === "pop") {
-        balloons = []; enemySpeed = 1.5;
-    }
-
     update();
 }
 
-// Luồng xử lý đồ họa (Hàm chạy liên tục lặp lại)
 function update() {
     if (gameOver) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.8)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "white"; ctx.font = "bold 26px Arial"; ctx.fillText("TRÒ CHƠI KẾT THÚC", canvas.width / 2 - 120, canvas.height / 2 - 10);
-        ctx.font = "16px Arial"; ctx.fillText("Chạm màn hình để thử lại", canvas.width / 2 - 80, canvas.height / 2 + 30);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white";
+        ctx.font = "bold 24px Arial";
+        ctx.fillText("GAME OVER", canvas.width / 2 - 70, canvas.height / 2 - 10);
+        ctx.font = "16px Arial";
+        ctx.fillText("Chạm màn hình chơi để thử lại", canvas.width / 2 - 100, canvas.height / 2 + 25);
         return;
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Xử lý di chuyển xe tăng của bạn dựa trên nút bấm
+    if (moveLeft && player.x > 0) player.x -= player.speed;
+    if (moveRight && player.x < canvas.width - player.width) player.x += player.speed;
+
+    // Vẽ Xe tăng người chơi
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+    // Vẽ nòng súng kép nếu đạt cấp độ cao
+    if (score >= 50) {
+        ctx.fillRect(player.x + 4, player.y - 12, 6, 12);
+        ctx.fillRect(player.x + player.width - 10, player.y - 12, 6, 12);
+    } else {
+        ctx.fillRect(player.x + player.width / 2 - 5, player.y - 12, 10, 12);
+    }
+
+    // Quản lý đạn bay
+    bullets.forEach((bullet, bIndex) => {
+        bullet.y -= bullet.speed;
+        ctx.fillStyle = bullet.color;
+        ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+        if (bullet.y < 0) bullets.splice(bIndex, 1);
+    });
+
+    // Tạo địch rơi từ trên xuống
     spawnTimer++;
+    if (spawnTimer % Math.max(30, 60 - level * 5) === 0) {
+        enemies.push({ x: Math.random() * (canvas.width - 35), y: -35, width: 35, height: 35, color: "#E91E63" });
+    }
 
-    // --- LOGIC TRÒ CHƠI 1: XE TĂNG ---
-    if (currentGame === "tank") {
-        ctx.fillStyle = player.color; ctx.fillRect(player.x, player.y, player.width, player.height);
-        ctx.fillRect(player.x + player.width / 2 - 5, player.y - 12, 10, 12); // nòng pháo
+    // Điều khiển địch và kiểm tra va chạm
+    enemies.forEach((enemy, eIndex) => {
+        enemy.y += enemySpeed;
+        ctx.fillStyle = enemy.color;
+        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
 
-        bullets.forEach((b, bIdx) => {
-            b.y -= b.speed; ctx.fillStyle = b.color; ctx.fillRect(b.x, b.y, b.width, b.height);
-            if (b.y < 0) bullets.splice(bIdx, 1);
-        });
-
-        if (spawnTimer % 50 === 0) {
-            enemies.push({ x: Math.random() * (canvas.width - 35), y: -35, width: 35, height: 35, color: "#F44336" });
+        if (enemy.y + enemy.height >= canvas.height) {
+            gameOver = true;
         }
 
-        enemies.forEach((enemy, eIdx) => {
-            enemy.y += enemySpeed; ctx.fillStyle = enemy.color; ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-            if (enemy.y + enemy.height >= canvas.height) gameOver = true;
+        bullets.forEach((bullet, bIndex) => {
+            if (
+                bullet.x < enemy.x + enemy.width &&
+                bullet.x + bullet.width > enemy.x &&
+                bullet.y < enemy.y + enemy.height &&
+                bullet.y + bullet.height > enemy.y
+            ) {
+                createExplosion(enemy.x + enemy.width/2, enemy.y + enemy.height/2);
+                enemies.splice(eIndex, 1);
+                bullets.splice(bIndex, 1);
+                score += 10;
+                scoreEl.innerText = score;
 
-            bullets.forEach((b, bIdx) => {
-                if (b.x < enemy.x + enemy.width && b.x + b.width > enemy.x && b.y < enemy.y + enemy.height && b.y + b.height > enemy.y) {
-                    enemies.splice(eIdx, 1); bullets.splice(bIdx, 1);
-                    score += 10; scoreEl.innerText = score;
-                    if(score % 60 === 0) enemySpeed += 0.5;
+                // Tăng cấp độ và tốc độ rơi sau mỗi 60 điểm
+                if (score % 60 === 0) {
+                    level++;
+                    enemySpeed += 0.4;
+                    levelEl.innerText = level;
                 }
-            });
+            }
         });
-    }
+    });
 
-    // --- LOGIC TRÒ CHƠI 2: HỨNG QUẢ ---
-    else if (currentGame === "catch") {
-        ctx.fillStyle = basket.color; ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
-
-        if (spawnTimer % 45 === 0) {
-            fruits.push({ x: Math.random() * (canvas.width - 20), y: -20, radius: 10, color: "#e53935" });
+    // Xử lý vẽ và làm biến mất các hạt nổ
+    particles.forEach((p, pIndex) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.03;
+        if (p.alpha <= 0) {
+            particles.splice(pIndex, 1);
+        } else {
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
         }
+    });
 
-        fruits.forEach((fruit, fIdx) => {
-            fruit.y += enemySpeed;
-            ctx.beginPath(); ctx.fillStyle = fruit.color; ctx.arc(fruit.x, fruit.y, fruit.radius, 0, Math.PI * 2); ctx.fill();
-
-            // Nếu quả chạm giỏ hứng
-            if (fruit.y + fruit.radius >= basket.y && fruit.x >= basket.x && fruit.x <= basket.x + basket.width) {
-                fruits.splice(fIdx, 1);
-                score += 10; scoreEl.innerText = score;
-                if(score % 50 === 0) enemySpeed += 0.5;
-            }
-            // Để rơi mất quả xuống đất -> Thua cuộc
-            else if (fruit.y - fruit.radius > canvas.height) {
-                gameOver = true;
-            }
-        });
-    }
-
-    // --- LOGIC TRÒ CHƠI 3: ĐẬP BONG BÓNG ---
-    else if (currentGame === "pop") {
-        if (spawnTimer % 35 === 0) {
-            let colors = ["#FF4081", "#00E676", "#3D5AFE", "#FFEA00", "#AA00FF"];
-            let randomColor = colors[Math.floor(Math.random() * colors.length)];
-            balloons.push({ x: Math.random() * (canvas.width - 40) + 20, y: canvas.height + 20, radius: 20, color: randomColor, speed: enemySpeed + Math.random() });
-        }
-
-        balloons.forEach((b, bIdx) => {
-            b.y -= b.speed;
-            ctx.beginPath(); ctx.fillStyle = b.color; ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2); ctx.fill();
-            // Vẽ dây bóng
-            ctx.beginPath(); ctx.moveTo(b.x, b.y + b.radius); ctx.lineTo(b.x, b.y + b.radius + 15); ctx.strokeStyle = "#aaa"; ctx.stroke();
-
-            // Bong bóng bay thoát khỏi màn hình -> Thua cuộc
-            if (b.y + b.radius < 0) {
-                gameOver = true;
-            }
-        });
-    }
-
-    animationFrameId = requestAnimationFrame(update);
+    requestAnimationFrame(update);
 }
+
+update();
 </script>
 
 </body>
-    </html>
-    
+</html>
