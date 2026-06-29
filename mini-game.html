@@ -3,25 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Mini Game Xe Tăng Siêu Cấp</title>
+<title>Game Xe Tăng - Nhiều Màn Chơi</title>
 <style>
     body {
         margin: 0; padding: 0; background-color: #111; color: white;
         font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; text-align: center; user-select: none;
     }
-    .info { padding: 12px; font-size: 20px; font-weight: bold; background: #000; border-bottom: 2px solid #333; }
-    #gameCanvas { background-color: #1e1e1e; display: block; margin: 0 auto; }
+    .info { padding: 12px; font-size: 18px; font-weight: bold; background: #000; border-bottom: 2px solid #333; }
+    #gameCanvas { background-color: #1a1a2e; display: block; margin: 0 auto; }
     
-    /* Giao diện nút bấm */
+    /* Giao diện nút bấm to hơn giúp dễ điều khiển */
     .controls {
         display: flex; justify-content: space-around; align-items: center;
-        padding: 15px 10px; background: #000; height: 80px; box-sizing: border-box;
+        padding: 15px 10px; background: #000; height: 85px; box-sizing: border-box;
     }
     .btn-ctrl {
-        width: 38%; height: 55px; background-color: #222; border: 2px solid #555;
-        color: white; font-size: 22px; font-weight: bold; border-radius: 12px;
+        width: 42%; height: 60px; background-color: #222; border: 2px solid #00e676;
+        color: #00e676; font-size: 24px; font-weight: bold; border-radius: 15px;
     }
-    .btn-ctrl:active { background-color: #444; }
+    .btn-ctrl:active { background-color: #00e676; color: black; }
     .btn-back {
         display: inline-block; padding: 10px 20px; background-color: #ff5722;
         color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 5px;
@@ -30,48 +30,55 @@
 </head>
 <body>
 
-<div class="info">Điểm: <span id="score">0</span> | Mạng: <span id="hp" style="color: #ff5252;">❤️❤️❤️</span></div>
+<div class="info">Màn: <span id="level" style="color: #00e676;">1</span> | Điểm: <span id="score">0</span>/<span id="targetScore">100</span> | Mạng: <span id="hp" style="color: #ff5252;">❤️❤️❤️</span></div>
 <canvas id="gameCanvas"></canvas>
 
-<!-- Bộ điều khiển -->
+<!-- Bộ điều khiển di chuyển trái phải -->
 <div class="controls">
     <button class="btn-ctrl" id="btnLeft">◀ TRÁI</button>
     <button class="btn-ctrl" id="btnRight">PHẢI ▶</button>
 </div>
 
-<div style="padding: 5px; font-size: 13px; color: #777;">Chạm vào vùng chơi game để BẮN ĐẠN!</div>
+<div style="padding: 5px; font-size: 13px; color: #888;">Chạm vào màn hình game để XẢ ĐẠN LIÊN TỤC!</div>
 <a href="index.html" class="btn-back">⬅ Về trang chủ</a>
 
 <script>
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreEl = document.getElementById("score");
+const targetScoreEl = document.getElementById("targetScore");
+const levelEl = document.getElementById("level");
 const hpEl = document.getElementById("hp");
 
 // Tối ưu kích thước màn hình
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 190;
+canvas.height = window.innerHeight - 195;
 
 let score = 0;
+let level = 1;
+let targetScore = 100; // Điểm cần đạt để qua màn
 let hp = 3;
 let gameOver = false;
+let levelUpgraded = false; // Trạng thái thông báo qua màn
 
+// Tăng tốc độ di chuyển của bạn để dễ chơi hơn (Tốc độ cũ là 7, nâng lên 10)
 const player = {
     x: canvas.width / 2 - 20,
     y: canvas.height - 50,
     width: 40,
     height: 40,
-    color: "#4CAF50",
-    speed: 7
+    color: "#00E676",
+    speed: 10 
 };
 
-let bullets = [];        // Đạn của ta
-let enemyBullets = [];   // Đạn của địch
-let enemies = [];        // Danh sách địch
-let items = [];          // Vật phẩm cứu thương
-let particles = [];      // Hiệu ứng nổ
+let bullets = [];        
+let enemyBullets = [];   
+let enemies = [];        
+let items = [];          
+let particles = [];      
 
-let enemySpeed = 2.0;
+let enemySpeed = 1.5;     // Tốc độ địch rơi chậm lại cho dễ bắn
+let enemyBulletSpeed = 3; // Đạn địch bay chậm hơn (Cũ là 4-5)
 let spawnTimer = 0;
 let moveLeft = false;
 let moveRight = false;
@@ -82,33 +89,25 @@ document.getElementById("btnLeft").addEventListener("pointerup", () => moveLeft 
 document.getElementById("btnRight").addEventListener("pointerdown", () => moveRight = true);
 document.getElementById("btnRight").addEventListener("pointerup", () => moveRight = false);
 
-// Chạm màn hình để bắn đạn
+// Bắn đạn siêu to khổng lồ
 canvas.addEventListener("pointerdown", function(e) {
-    if (gameOver) {
-        resetGame();
-        return;
-    }
+    if (gameOver) { resetGame(); return; }
+    if (levelUpgraded) { nextLevel(); return; }
 
-    // Nếu điểm >= 100: Kích hoạt đạn chùm 3 tia cực mạnh
-    if (score >= 100) {
-        bullets.push({ x: player.x + player.width/2 - 3, y: player.y, width: 6, height: 18, color: "#00E676", vx: 0, vy: -10 });
-        bullets.push({ x: player.x, y: player.y, width: 6, height: 18, color: "#00E676", vx: -2, vy: -9 });
-        bullets.push({ x: player.x + player.width - 6, y: player.y, width: 6, height: 18, color: "#00E676", vx: 2, vy: -9 });
-    } else {
-        bullets.push({ x: player.x + player.width / 2 - 4, y: player.y, width: 8, height: 16, color: "#FFEA00", vx: 0, vy: -8 });
-    }
+    // Bắn một lúc 3 tia đạn to đùng giúp quét sạch bản đồ dễ dàng hơn
+    bullets.push({ x: player.x + player.width/2 - 4, y: player.y, width: 8, height: 20, color: "#FFEA00", vx: 0, vy: -12 });
+    bullets.push({ x: player.x, y: player.y, width: 8, height: 20, color: "#FFEA00", vx: -1.5, vy: -11 });
+    bullets.push({ x: player.x + player.width - 8, y: player.y, width: 8, height: 20, color: "#FFEA00", vx: 1.5, vy: -11 });
 });
 
-function createExplosion(x, y, isPlayer = false) {
-    const count = isPlayer ? 25 : 12;
-    const colorTheme = isPlayer ? "#FF1744" : "#FF9100";
-    for (let i = 0; i < count; i++) {
+function createExplosion(x, y, color = "#FF9100") {
+    for (let i = 0; i < 10; i++) {
         particles.push({
             x: x, y: y,
-            vx: (Math.random() - 0.5) * 6,
-            vy: (Math.random() - 0.5) * 6,
+            vx: (Math.random() - 0.5) * 5,
+            vy: (Math.random() - 0.5) * 5,
             radius: Math.random() * 3 + 2,
-            color: Math.random() > 0.4 ? colorTheme : "#FFEA00",
+            color: color,
             alpha: 1
         });
     }
@@ -121,101 +120,98 @@ function updateHPDisplay() {
 }
 
 function resetGame() {
-    score = 0; hp = 3; enemySpeed = 2.0;
-    scoreEl.innerText = score;
+    score = 0; level = 1; targetScore = 100; enemySpeed = 1.5; enemyBulletSpeed = 3;
+    scoreEl.innerText = score; targetScoreEl.innerText = targetScore; levelEl.innerText = level;
     updateHPDisplay();
     bullets = []; enemyBullets = []; enemies = []; items = []; particles = [];
     player.x = canvas.width / 2 - 20;
-    gameOver = false;
+    gameOver = false; levelUpgraded = false;
+    update();
+}
+
+// Chuyển sang màn chơi mới
+function nextLevel() {
+    level++;
+    score = 0;
+    targetScore = 100 + level * 50; // Màn càng cao cần nhiều điểm hơn
+    enemySpeed += 0.4;             // Địch nhanh hơn một chút theo từng màn
+    enemyBulletSpeed += 0.5;       // Đạn địch nhanh hơn tí xíu
+    
+    scoreEl.innerText = score; targetScoreEl.innerText = targetScore; levelEl.innerText = level;
+    bullets = []; enemyBullets = []; enemies = []; items = []; particles = [];
+    levelUpgraded = false;
     update();
 }
 
 function update() {
     if (gameOver) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "white";
-        ctx.font = "bold 26px Arial";
-        ctx.fillText("TRÒ CHƠI KẾT THÚC", canvas.width / 2 - 125, canvas.height / 2 - 10);
-        ctx.font = "16px Arial";
-        ctx.fillText("Điểm của bạn: " + score, canvas.width / 2 - 55, canvas.height / 2 + 25);
-        ctx.fillText("Chạm màn hình chơi để thử lại", canvas.width / 2 - 100, canvas.height / 2 + 60);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.85)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white"; ctx.font = "bold 26px Arial"; ctx.fillText("TRÒ CHƠI KẾT THÚC", canvas.width / 2 - 125, canvas.height / 2 - 10);
+        ctx.font = "16px Arial"; ctx.fillText("Chạm màn hình để hồi sinh chơi lại", canvas.width / 2 - 110, canvas.height / 2 + 30);
+        return;
+    }
+
+    // Hiển thị màn hình chúc mừng khi đủ điểm qua màn
+    if (levelUpgraded) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.8)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#00E676"; ctx.font = "bold 28px Arial"; ctx.fillText("🎉 QUA MÀN " + level + "! 🎉", canvas.width / 2 - 100, canvas.height / 2 - 10);
+        ctx.fillStyle = "white"; ctx.font = "18px Arial"; ctx.fillText("Chạm màn hình để bước vào MÀN " + (level + 1), canvas.width / 2 - 130, canvas.height / 2 + 35);
         return;
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Di chuyển xe tăng của ta
+    // Di chuyển mượt mà
     if (moveLeft && player.x > 0) player.x -= player.speed;
     if (moveRight && player.x < canvas.width - player.width) player.x += player.speed;
 
-    // Vẽ xe tăng ta
-    ctx.fillStyle = player.color;
-    ctx.fillRect(player.x, player.y, player.width, player.height);
-    ctx.fillRect(player.x + player.width/2 - 5, player.y - 12, 10, 12);
+    // Vẽ xe tăng của bạn
+    ctx.fillStyle = player.color; ctx.fillRect(player.x, player.y, player.width, player.height);
+    ctx.fillStyle = "#FFF"; ctx.fillRect(player.x + player.width/2 - 4, player.y - 12, 8, 12); // Nòng súng màu trắng
 
-    // Xử lý đạn của ta bay
+    // Đạn của bạn bay
     bullets.forEach((b, bIndex) => {
-        b.x += b.vx;
-        b.y += b.vy;
-        ctx.fillStyle = b.color;
-        ctx.fillRect(b.x, b.y, b.width, b.height);
+        b.x += b.vx; b.y += b.vy;
+        ctx.fillStyle = b.color; ctx.fillRect(b.x, b.y, b.width, b.height);
         if (b.y < 0 || b.x < 0 || b.x > canvas.width) bullets.splice(bIndex, 1);
     });
 
-    // Xử lý đạn của ĐỊCH bay xuống
+    // Đạn địch bay xuống
     enemyBullets.forEach((eb, ebIndex) => {
         eb.y += eb.speed;
-        ctx.fillStyle = eb.color;
-        ctx.fillRect(eb.x, eb.y, eb.width, eb.height);
+        ctx.fillStyle = eb.color; ctx.fillRect(eb.x, eb.y, eb.width, eb.height);
 
-        // Đạn địch bắn trúng ta
-        if (
-            eb.x < player.x + player.width &&
-            eb.x + eb.width > player.x &&
-            eb.y < player.y + player.height &&
-            eb.y + eb.height > player.y
-        ) {
+        if (eb.x < player.x + player.width && eb.x + eb.width > player.x && eb.y < player.y + player.height && eb.y + eb.height > player.y) {
             enemyBullets.splice(ebIndex, 1);
-            hp--;
-            updateHPDisplay();
-            createExplosion(player.x + player.width/2, player.y + player.height/2, true);
+            hp--; updateHPDisplay();
+            createExplosion(player.x + player.width/2, player.y + player.height/2, "#FF1744");
             if (hp <= 0) gameOver = true;
         }
-
         if (eb.y > canvas.height) enemyBullets.splice(ebIndex, 1);
     });
 
-    // Sinh xe tăng địch
+    // Tạo địch rơi xuống (Tần suất spawn dựa theo từng màn)
     spawnTimer++;
-    if (spawnTimer % 50 === 0) {
-        enemies.push({ x: Math.random() * (canvas.width - 35), y: -35, width: 35, height: 35, color: "#F44336" });
+    if (spawnTimer % Math.max(25, 55 - level * 4) === 0) {
+        enemies.push({ x: Math.random() * (canvas.width - 35), y: -35, width: 35, height: 35, color: "#FF1744" });
     }
 
-    // Sinh vật phẩm cứu thương (Xác suất nhỏ khi spawnTimer chia hết cho 350)
-    if (spawnTimer % 350 === 0 && hp < 5) {
+    // Tăng tỷ lệ rơi hộp cứu thương để hồi máu liên tục (Dễ chơi hơn nhiều)
+    if (spawnTimer % 200 === 0 && hp < 5) {
         items.push({ x: Math.random() * (canvas.width - 25), y: -25, size: 25 });
     }
 
-    // Xử lý vật phẩm cứu thương rơi
+    // Xử lý hộp cứu thương
     items.forEach((item, iIndex) => {
-        item.y += 1.5;
-        // Vẽ hộp cứu thương nền trắng chữ thập đỏ
+        item.y += 2;
         ctx.fillStyle = "#FFF"; ctx.fillRect(item.x, item.y, item.size, item.size);
         ctx.fillStyle = "#FF1744";
         ctx.fillRect(item.x + item.size/2 - 2, item.y + 4, 4, item.size - 8);
         ctx.fillRect(item.x + 4, item.y + item.size/2 - 2, item.size - 8, 4);
 
-        // Ta ăn được hộp cứu thương
-        if (
-            item.x < player.x + player.width &&
-            item.x + item.size > player.x &&
-            item.y < player.y + player.height &&
-            item.y + item.size > player.y
-        ) {
+        if (item.x < player.x + player.width && item.x + item.size > player.x && item.y < player.y + player.height && item.y + item.size > player.y) {
             items.splice(iIndex, 1);
-            hp++;
-            updateHPDisplay();
+            hp++; updateHPDisplay();
         }
         if (item.y > canvas.height) items.splice(iIndex, 1);
     });
@@ -223,61 +219,22 @@ function update() {
     // Quản lý xe tăng địch
     enemies.forEach((enemy, eIndex) => {
         enemy.y += enemySpeed;
-        ctx.fillStyle = enemy.color;
-        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+        ctx.fillStyle = enemy.color; ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
 
-        // Địch ngẫu nhiên bắn đạn xuống (tỷ lệ nhỏ mỗi khung hình)
-        if (Math.random() < 0.007) {
-            enemyBullets.push({ x: enemy.x + enemy.width/2 - 3, y: enemy.y + enemy.height, width: 6, height: 12, color: "#FF1744", speed: enemySpeed + 2 });
+        // Địch bắn trả (Tỉ lệ bắn vừa phải để không bị quá khó)
+        if (Math.random() < 0.006) {
+            enemyBullets.push({ x: enemy.x + enemy.width/2 - 3, y: enemy.y + enemy.height, width: 6, height: 12, color: "#FF1744", speed: enemyBulletSpeed });
         }
 
-        // Địch lọt xuống vạch đáy màn hình
+        // Địch lọt xuống đáy màn hình chỉ trừ 1 mạng, không làm thua ngay
         if (enemy.y + enemy.height >= canvas.height) {
             enemies.splice(eIndex, 1);
-            hp--;
-            updateHPDisplay();
+            hp--; updateHPDisplay();
             if (hp <= 0) gameOver = true;
         }
 
-        // Kiểm tra đạn của ta bắn trúng địch
+        // Đạn của bạn bắn trúng địch
         bullets.forEach((b, bIndex) => {
-            if (
-                b.x < enemy.x + enemy.width &&
-                b.x + b.width > enemy.x &&
-                b.y < enemy.y + enemy.height &&
-                b.y + b.height > enemy.y
-            ) {
-                createExplosion(enemy.x + enemy.width/2, enemy.y + enemy.height/2);
-                enemies.splice(eIndex, 1);
-                bullets.splice(bIndex, 1);
-                score += 10;
-                scoreEl.innerText = score;
-
-                // Tăng độ khó nhẹ sau mỗi 50 điểm
-                if (score % 50 === 0) {
-                    enemySpeed += 0.3;
-                }
-            }
-        });
-    });
-
-    // Hiệu ứng nổ hoa cải
-    particles.forEach((p, pIndex) => {
-        p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
-        if (p.alpha <= 0) {
-            particles.splice(pIndex, 1);
-        } else {
-            ctx.save(); ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
-            ctx.restore();
-        }
-    });
-
-    requestAnimationFrame(update);
-}
-
-update();
-</script>
-
-</body>
-</html>
+            if (b.x < enemy.x + enemy.width && b.x + b.width > enemy.x && b.y < enemy.y + enemy.height && b.y + b.height > enemy.y) {
+                createExplosion(enemy.x + enemy.width/2, enemy.y + enemy.height/2, "#FFCC00");
+    
