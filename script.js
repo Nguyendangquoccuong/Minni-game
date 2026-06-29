@@ -1,17 +1,29 @@
 let number = Math.floor(Math.random() * 10) + 1;
+let score = 0;
 
 function startGame() {
-    let guess = prompt("🎮 Đoán số từ 1 đến 10:");
 
-    if (guess == null) return;
+    let guess = parseInt(document.getElementById("guess").value);
 
-    if (parseInt(guess) === number) {
+    if (guess === number) {
+        score++;
         document.getElementById("text").innerHTML =
-        "🎉 Chính xác! Bạn thắng!";
-        number = Math.floor(Math.random() * 10) + 1;
-    } else {
-        document.getElementById("text").innerHTML =
-        "❌ Sai rồi! Số đúng là " + number + ". Nhấn nút để chơi lại.";
+        "🎉 Chính xác! Điểm: " + score;
+
         number = Math.floor(Math.random() * 10) + 1;
     }
+    else if (guess < number) {
+        document.getElementById("text").innerHTML =
+        "📉 Số nhỏ quá!";
+    }
+    else {
+        document.getElementById("text").innerHTML =
+        "📈 Số lớn quá!";
+    }
+}
+
+function newGame() {
+    number = Math.floor(Math.random() * 10) + 1;
+    document.getElementById("guess").value = "";
+    document.getElementById("text").innerHTML = "🎮 Trò chơi mới!";
 }
