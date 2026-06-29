@@ -3,77 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MINNI NEWS - Cập Nhật Liên Tục 24/7</title>
+<title>MINNI WORLD - Trang Tin Tức Tổng Hợp</title>
 <style>
     body {
-        margin: 0; padding: 0; background-color: #0b0c16; color: white;
-        font-family: 'Segoe UI', Arial, sans-serif; text-align: center;
+        margin: 0; padding: 0; background-color: #f4f6f9; color: #333;
+        font-family: 'Segoe UI', Arial, sans-serif;
     }
-    
-    /* Header đồng bộ phong cách giải trí MINNI WORLD */
     .header {
         background: linear-gradient(135deg, #1e88e5, #1565c0); color: white;
-        padding: 20px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        padding: 20px 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     .header h1 { margin: 0; font-size: 26px; letter-spacing: 1px; }
     .header p { margin: 5px 0 0 0; font-size: 13px; color: #e3f2fd; }
 
-    /* Thanh chọn nguồn báo nhanh */
-    .news-tabs {
-        display: flex; justify-content: center; gap: 10px; padding: 15px;
-        background-color: #161730; border-bottom: 2px solid #222;
+    .nav-categories {
+        display: flex; justify-content: flex-start; gap: 15px; background: #ffffff;
+        padding: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow-x: auto;
+        white-space: nowrap; -webkit-overflow-scrolling: touch;
     }
-    .tab-btn {
-        background-color: #222545; border: 2px solid #1e88e5; color: white;
-        padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 13px;
+    .cat-link {
+        text-decoration: none; color: #555; font-size: 14px; font-weight: bold;
+        padding: 6px 12px; border-radius: 20px; transition: all 0.2s;
     }
-    .tab-btn:active { background-color: #1e88e5; }
+    .cat-link.active, .cat-link:hover { background-color: #1e88e5; color: white; }
 
-    /* Khung hiển thị luồng tin tức trực tiếp từ tòa soạn */
-    .news-frame-container {
-        width: 100%; max-width: 600px; margin: 15px auto; padding: 0 10px; box-sizing: border-box;
-    }
-    iframe {
-        width: 100%; height: 75vh; border: 3px solid #222; border-radius: 12px;
-        background-color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    }
+    .main-container { max-width: 800px; margin: 20px auto; padding: 0 15px; box-sizing: border-box; }
 
-    .footer { margin: 20px 0 30px 0; }
+    .news-card {
+        background: #ffffff; border-radius: 12px; overflow: hidden;
+        margin-bottom: 20px; box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+        display: flex; flex-direction: column; transition: transform 0.2s;
+        text-decoration: none; color: #333;
+    }
+    .news-card:active { transform: scale(0.99); }
+
+    .news-image { width: 100%; height: 190px; background-size: cover; background-position: center; }
+    .news-content { padding: 15px; text-align: left; }
+    .news-tag {
+        display: inline-block; background: #e3f2fd; color: #1e88e5;
+        font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 4px; margin-bottom: 8px;
+    }
+    .news-title { margin: 0 0 8px 0; font-size: 18px; color: #111; line-height: 1.4; font-weight: bold; }
+    .news-desc { margin: 0 0 12px 0; font-size: 14px; color: #666; line-height: 1.5; }
+    .btn-read { display: inline-block; color: #1e88e5; font-size: 14px; font-weight: bold; }
+
+    .footer { text-align: center; margin: 40px 0 30px 0; }
     .btn-back {
-        display: inline-block; padding: 10px 24px; background-color: #ff5722;
-        color: white; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px;
+        display: inline-block; padding: 10px 24px; background-color: #333;
+        color: white; text-decoration: none; border-radius: 20px;
+        font-weight: bold; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>📰 MINNI NEWS 24H</h1>
-        <p>Tin tức đa dạng, luồng báo chí cập nhật liên tục từng phút</p>
+        <h1>📰 MINNI NEWS</h1>
+        <p>Cập nhật luồng tin tức đa dạng từ các báo điện tử hàng đầu</p>
     </div>
 
-    <!-- Các nút nhấn chuyển đổi nhanh giữa các nguồn báo uy tín ngay trên màn hình điện thoại -->
-    <div class="news-tabs">
-        <button class="tab-btn" onclick="changeSource('https://vnexpress.net/tin-tuc-24h')">VnExpress 24h</button>
-        <button class="tab-btn" onclick="changeSource('https://dantri.com.vn/tin-moi-nhat.htm')">Dân Trí Mới</button>
-        <button class="tab-btn" onclick="changeSource('https://vnexpress.net/thoi-su')">Thời Sự</button>
+    <div class="nav-categories">
+        <a href="https://vnexpress.net" class="cat-link active" target="_blank">VnExpress</a>
+        <a href="https://dantri.com.vn" class="cat-link" target="_blank">Dân Trí</a>
+        <a href="https://24h.com.vn" class="cat-link" target="_blank">Tin 24h</a>
+        <a href="https://vietnamnet.vn" class="cat-link" target="_blank">VietNamNet</a>
     </div>
 
-    <div class="news-frame-container">
-        <!-- Khung nhúng thông minh hiển thị trực tiếp giao diện báo điện tử -->
-        <iframe id="newsFrame" src="https://vnexpress.net/tin-tuc-24h"></iframe>
+    <div class="main-container">
+
+        <!-- TIN 1: THỜI SỰ CHÍNH -->
+        <a href="https://vnexpress.net" target="_blank" class="news-card">
+            <div class="news-image" style="background-image: url('https://picsum.photos');"></div>
+            <div class="news-content">
+                <span class="news-tag" style="background-color: #ffebee; color: #c62828;">THỜI SỰ ĐỒNG LOẠT</span>
+                <h2 class="news-title">Dòng sự kiện nóng: Cập nhật tình hình giao thông, kinh tế và đời sống đô thị mới nhất</h2>
+                <p class="news-desc">Theo dõi các thông tin chính thống về các dự án hạ tầng, thông tin dân sinh và chuyển động kinh tế được cập nhật liên tục từng giờ từ phòng thời sự.</p>
+                <span class="btn-read">Đọc báo trực tiếp trên VnExpress →</span>
+            </div>
+        </a>
+
+        <!-- TIN 2: CÔNG NGHỆ -->
+        <a href="https://vnexpress.net" target="_blank" class="news-card">
+            <div class="news-image" style="background-image: url('https://picsum.photos');"></div>
+            <div class="news-content">
+                <span class="news-tag">CÔNG NGHỆ</span>
+                <h2 class="news-title">Thị trường điện thoại thông minh và xu hướng AI tạo bùng nổ công nghệ toàn cầu</h2>
+                <p class="news-desc">Khám phá các dòng điện thoại mới ra mắt, các ứng dụng trí tuệ nhân tạo đột phá và mẹo tối ưu hóa thiết bị di động của bạn mượt mà hơn.</p>
+                <span class="btn-read">Xem chuyên mục Công Nghệ →</span>
+            </div>
+        </a>
+
+        <!-- TIN 3: GIẢI TRÍ & THỂ THAO -->
+        <a href="https://dantri.com.vn" target="_blank" class="news-card">
+            <div class="news-image" style="background-image: url('https://picsum.photos');"></div>
+            <div class="news-content">
+                <span class="news-tag" style="background-color: #e8f5e9; color: #2e7d32;">GIẢI TRÍ</span>
+                <h2 class="news-title">Tiêu điểm văn hóa nghệ thuật, phim ảnh và các hoạt động giải trí cuối tuần</h2>
+                <p class="news-desc">Tổng hợp lịch phát sóng các chương trình hot, tin tức về các nghệ sĩ yêu thích và xu hướng âm nhạc đang thịnh hành trên các nền tảng mạng xã hội.</p>
+                <span class="btn-read">Đọc tin Giải Trí trên Dân Trí →</span>
+            </div>
+        </a>
+
     </div>
 
     <div class="footer">
         <a href="index.html" class="btn-back">⬅ Quay về trang chủ</a>
     </div>
-
-<script>
-    // Hàm xử lý đổi nguồn tin tức mượt mà khi người dùng chạm nút
-    function changeSource(url) {
-        document.getElementById('newsFrame').src = url;
-    }
-</script>
 
 </body>
 </html>
