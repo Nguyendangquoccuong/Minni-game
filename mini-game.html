@@ -1,17 +1,241 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Mini Game</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kho Mini Game - Minni World</title>
+<style>
+    body {
+        margin: 0; padding: 0; background-color: #222; color: white;
+        font-family: Arial, sans-serif; overflow: hidden; text-align: center; user-select: none;
+    }
+    /* Giao diện Menu Chọn Game */
+    #menuContainer {
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        height: 100vh; background: linear-gradient(135deg, #1d2671, #c33764);
+    }
+    .menu-title { font-size: 28px; margin-bottom: 30px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+    .game-btn {
+        width: 80%; max-width: 300px; padding: 15px; margin: 10px 0;
+        font-size: 18px; font-weight: bold; border: none; border-radius: 25px;
+        cursor: pointer; color: white; transition: 0.2s; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    .btn-tank { background-color: #4CAF50; }
+    .btn-catch { background-color: #FF9800; }
+    .btn-pop { background-color: #00BCD4; }
+    .btn-back-home {
+        background: none; border: 2px solid white; color: white; margin-top: 20px; font-size: 15px; padding: 8px 20px; text-decoration: none; border-radius: 5px;
+    }
+
+    /* Giao diện vùng chơi Game */
+    #gameContainer { display: none; position: relative; width: 100vw; height: 100vh; }
+    #gameCanvas { background-color: #333; display: block; margin: 0 auto; }
+    .info { padding: 10px; font-size: 20px; font-weight: bold; background-color: #111; }
+    .btn-back-menu {
+        position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+        padding: 10px 20px; background-color: #e91e63; color: white;
+        border: none; border-radius: 5px; font-size: 16px; font-weight: bold; z-index: 10;
+    }
+</style>
 </head>
 <body>
 
-<h1>🎮 Mini Game</h1>
+<!-- CHUYÊN MỤC 1: MENU CHỌN GAME -->
+<div id="menuContainer">
+    <div class="menu-title">🎮 KHO MINI GAME 🎮</div>
+    <button class="game-btn btn-tank" onclick="startGame('tank')">🚀 Bắn Xe Tăng</button>
+    <button class="game-btn btn-catch" onclick="startGame('catch')">🍎 Hứng Quả Ngọt</button>
+    <button class="game-btn btn-pop" onclick="startGame('pop')">🎈 Đập Bong Bóng</button>
+    <a href="index.html" class="btn-back-home">⬅ Về Trang Chủ Chính</a>
+</div>
 
-<p>Đây là khu trò chơi của MINNI WORLD.</p>
+<!-- CHUYÊN MỤC 2: KHUNG CHƠI GAME TỰ ĐỘNG CHUYỂN ĐỔI -->
+<div id="gameContainer">
+    <div class="info">Điểm: <span id="score">0</span></div>
+    <canvas id="gameCanvas"></canvas>
+    <button class="btn-back-menu" onclick="backToMenu()">⬅ Thoát Ra Menu</button>
+</div>
 
-<p><a href="index.html">⬅️ Về trang chủ</a></p>
+<script>
+const menuContainer = document.getElementById("menuContainer");
+const gameContainer = document.getElementById("gameContainer");
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const scoreEl = document.getElementById("score");
+
+let score = 0;
+let gameOver = false;
+let currentGame = "";
+let animationFrameId;
+
+// Thiết lập kích thước màn hình
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 130;
+
+// Các biến phục vụ cấu trúc vật lý của từng Game
+let player, bullets, enemies, enemySpeed, spawnTimer; // Game Xe Tăng
+let basket, fruits; // Game Hứng Quả
+let balloons; // Game Bong Bóng
+
+// Lắng nghe thao tác Chạm/Bấm của người chơi
+window.addEventListener("pointerdown", function(e) {
+    if (e.target.className === "btn-back-menu") return;
+    
+    if (gameOver) {
+        resetGame();
+        return;
+    }
+
+    if (currentGame === "tank") {
+        bullets.push({ x: player.x + player.width / 2 - 4, y: player.y, width: 8, height: 15, color: "#FFEA00", speed: 8 });
+    } 
+    else if (currentGame === "catch") {
+        // Game hứng quả: Chạm bên trái màn hình sang trái, chạm bên phải sang phải
+        if (e.clientX < window.innerWidth / 2) {
+            basket.x -= 35; if (basket.x < 0) basket.x = 0;
+        } else {
+            basket.x += 35; if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
+        }
+    }
+    else if (currentGame === "pop") {
+        // Game Đập Bong bóng: Kiểm tra xem người chơi bấm trúng quả bóng nào
+        balloons.forEach((b, index) => {
+            let dist = Math.hypot(e.clientX - b.x, (e.clientY - 60) - b.y);
+            if (dist < b.radius) {
+                balloons.splice(index, 1);
+                score += 5;
+                scoreEl.innerText = score;
+            }
+        });
+    }
+});
+
+// Hàm khởi chạy trò chơi được chọn từ Menu
+function startGame(gameType) {
+    currentGame = gameType;
+    menuContainer.style.display = "none";
+    gameContainer.style.display = "block";
+    resetGame();
+}
+
+function backToMenu() {
+    cancelAnimationFrame(animationFrameId);
+    currentGame = "";
+    gameContainer.style.display = "none";
+    menuContainer.style.display = "flex";
+}
+
+function resetGame() {
+    score = 0;
+    scoreEl.innerText = score;
+    gameOver = false;
+    spawnTimer = 0;
+
+    if (currentGame === "tank") {
+        player = { x: canvas.width / 2 - 20, y: canvas.height - 50, width: 40, height: 40, color: "#4CAF50" };
+        bullets = []; enemies = []; enemySpeed = 2;
+    } 
+    else if (currentGame === "catch") {
+        basket = { x: canvas.width / 2 - 40, y: canvas.height - 30, width: 80, height: 20, color: "#FF9800" };
+        fruits = []; enemySpeed = 3;
+    }
+    else if (currentGame === "pop") {
+        balloons = []; enemySpeed = 1.5;
+    }
+
+    update();
+}
+
+// Luồng xử lý đồ họa (Hàm chạy liên tục lặp lại)
+function update() {
+    if (gameOver) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.8)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white"; ctx.font = "bold 26px Arial"; ctx.fillText("TRÒ CHƠI KẾT THÚC", canvas.width / 2 - 120, canvas.height / 2 - 10);
+        ctx.font = "16px Arial"; ctx.fillText("Chạm màn hình để thử lại", canvas.width / 2 - 80, canvas.height / 2 + 30);
+        return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    spawnTimer++;
+
+    // --- LOGIC TRÒ CHƠI 1: XE TĂNG ---
+    if (currentGame === "tank") {
+        ctx.fillStyle = player.color; ctx.fillRect(player.x, player.y, player.width, player.height);
+        ctx.fillRect(player.x + player.width / 2 - 5, player.y - 12, 10, 12); // nòng pháo
+
+        bullets.forEach((b, bIdx) => {
+            b.y -= b.speed; ctx.fillStyle = b.color; ctx.fillRect(b.x, b.y, b.width, b.height);
+            if (b.y < 0) bullets.splice(bIdx, 1);
+        });
+
+        if (spawnTimer % 50 === 0) {
+            enemies.push({ x: Math.random() * (canvas.width - 35), y: -35, width: 35, height: 35, color: "#F44336" });
+        }
+
+        enemies.forEach((enemy, eIdx) => {
+            enemy.y += enemySpeed; ctx.fillStyle = enemy.color; ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+            if (enemy.y + enemy.height >= canvas.height) gameOver = true;
+
+            bullets.forEach((b, bIdx) => {
+                if (b.x < enemy.x + enemy.width && b.x + b.width > enemy.x && b.y < enemy.y + enemy.height && b.y + b.height > enemy.y) {
+                    enemies.splice(eIdx, 1); bullets.splice(bIdx, 1);
+                    score += 10; scoreEl.innerText = score;
+                    if(score % 60 === 0) enemySpeed += 0.5;
+                }
+            });
+        });
+    }
+
+    // --- LOGIC TRÒ CHƠI 2: HỨNG QUẢ ---
+    else if (currentGame === "catch") {
+        ctx.fillStyle = basket.color; ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+        if (spawnTimer % 45 === 0) {
+            fruits.push({ x: Math.random() * (canvas.width - 20), y: -20, radius: 10, color: "#e53935" });
+        }
+
+        fruits.forEach((fruit, fIdx) => {
+            fruit.y += enemySpeed;
+            ctx.beginPath(); ctx.fillStyle = fruit.color; ctx.arc(fruit.x, fruit.y, fruit.radius, 0, Math.PI * 2); ctx.fill();
+
+            // Nếu quả chạm giỏ hứng
+            if (fruit.y + fruit.radius >= basket.y && fruit.x >= basket.x && fruit.x <= basket.x + basket.width) {
+                fruits.splice(fIdx, 1);
+                score += 10; scoreEl.innerText = score;
+                if(score % 50 === 0) enemySpeed += 0.5;
+            }
+            // Để rơi mất quả xuống đất -> Thua cuộc
+            else if (fruit.y - fruit.radius > canvas.height) {
+                gameOver = true;
+            }
+        });
+    }
+
+    // --- LOGIC TRÒ CHƠI 3: ĐẬP BONG BÓNG ---
+    else if (currentGame === "pop") {
+        if (spawnTimer % 35 === 0) {
+            let colors = ["#FF4081", "#00E676", "#3D5AFE", "#FFEA00", "#AA00FF"];
+            let randomColor = colors[Math.floor(Math.random() * colors.length)];
+            balloons.push({ x: Math.random() * (canvas.width - 40) + 20, y: canvas.height + 20, radius: 20, color: randomColor, speed: enemySpeed + Math.random() });
+        }
+
+        balloons.forEach((b, bIdx) => {
+            b.y -= b.speed;
+            ctx.beginPath(); ctx.fillStyle = b.color; ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2); ctx.fill();
+            // Vẽ dây bóng
+            ctx.beginPath(); ctx.moveTo(b.x, b.y + b.radius); ctx.lineTo(b.x, b.y + b.radius + 15); ctx.strokeStyle = "#aaa"; ctx.stroke();
+
+            // Bong bóng bay thoát khỏi màn hình -> Thua cuộc
+            if (b.y + b.radius < 0) {
+                gameOver = true;
+            }
+        });
+    }
+
+    animationFrameId = requestAnimationFrame(update);
+}
+</script>
 
 </body>
-</html>
+    </html>
+    
