@@ -1,26 +1,144 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MINNI WORLD</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MINNI WORLD - Thế Giới Phim Ảnh Tổng Hợp</title>
+<style>
+    body {
+        margin: 0; padding: 0; background-color: #0b0c10; color: #eee;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .header {
+        background: linear-gradient(135deg, #e50914, #9b050c); color: white;
+        padding: 25px 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    .header h1 { margin: 0; font-size: 24px; letter-spacing: 1px; }
+    .header p { margin: 5px 0 0 0; font-size: 13px; color: #ffcdd2; }
+    
+    .container { max-width: 800px; margin: 20px auto; padding: 0 15px; box-sizing: border-box; }
+    
+    /* Giao diện lưới chia danh sách phim */
+    .movie-grid {
+        display: flex; flex-direction: column; gap: 20px;
+    }
+    
+    /* Thiết kế thẻ phim (Movie Card) */
+    .movie-card {
+        background: #1f1f23; border-radius: 12px; overflow: hidden;
+        border: 1px solid #333; display: flex; flex-direction: column;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    
+    /* Khung tỷ lệ video hoặc ảnh phim */
+    .movie-media {
+        position: relative; width: 100%; height: 0; padding-bottom: 56.25%;
+        background-color: #000;
+    }
+    .movie-media iframe {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
+    }
+    
+    .movie-info { padding: 15px; text-align: left; }
+    .movie-tag {
+        display: inline-block; font-size: 11px; font-weight: bold; 
+        padding: 3px 8px; border-radius: 4px; margin-bottom: 8px;
+    }
+    /* Màu sắc riêng cho từng thể loại */
+    .tag-animation { background-color: #ffe082; color: #6d4c41; }
+    .tag-action { background-color: #ffcdd2; color: #b71c1c; }
+    .tag-scifi { background-color: #b2ebf2; color: #006064; }
+    .tag-horror { background-color: #e1bee7; color: #4a148c; }
 
+    .movie-title { margin: 0 0 8px 0; font-size: 18px; color: #fff; line-height: 1.4; font-weight: bold; }
+    .movie-desc { margin: 0; font-size: 13.5px; color: #ccc; text-align: justify; line-height: 1.5; }
+    
+    .cinema-tip {
+        background-color: #2b1d1f; border-left: 4px solid #e50914;
+        padding: 12px; border-radius: 8px; margin: 25px 0; font-size: 13px; text-align: left;
+    }
+    .shop-link { display: inline-block; margin-top: 10px; color: #e50914; text-decoration: none; font-weight: bold; }
+    
+    .footer { text-align: center; margin: 40px 0; }
+    .btn-back {
+        display: inline-block; padding: 10px 24px; background-color: #333;
+        color: white; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px;
+    }
+</style>
+</head>
 <body>
 
-<h1>🌍 MINNI WORLD</h1>
+    <div class="header">
+        <h1>🎬 MINNI CINEMA</h1>
+        <p>Rạp phim tổng hợp - Cập nhật trailer và review các siêu phẩm điện ảnh</p>
+    </div>
 
-<p>Chào mừng đến với thế giới giải trí!</p>
+    <div class="container">
+        
+        <!-- Khung tiện ích kiếm tiền Shopee đặt ở đầu danh sách -->
+        <div class="cinema-tip">
+            <strong>🍿 Góc Rạp Phim Tại Gia:</strong> Thưởng thức các bộ phim bom tấn với trải nghiệm màn hình 100 inch cực đỉnh ngay tại phòng ngủ bằng máy chiếu mini thông minh kết nối điện thoại.<br>
+            <a href="https://shopee.vn" class="shop-link" target="_blank">👉 Xem giá Máy Chiếu Mini Điện Thoại bán chạy nhất trên Shopee</a>
+        </div>
 
-<p>
-    <a href="mini-game.html">🎮 Mini Game</a> | 
-    <a href="nhadat.html">🏠 Nhà đất</a> | 
-    <a href="tintuc.html">📰 Tin tức</a> | 
-    <a href="congcu.html">🛠️ Công cụ</a> |
-    <a href="phim.html">🎬 Xem Phim</a>
-</p>
-  
+        <!-- DANH SÁCH PHIM ĐA DẠNG -->
+        <div class="movie-grid">
+
+            <!-- PHIM 1: HOẠT HÌNH (Giữ lại phim Minions cũ) -->
+            <div class="movie-card">
+                <div class="movie-media">
+                    <iframe src="https://youtube.com" allowfullscreen></iframe>
+                </div>
+                <div class="movie-info">
+                    <span class="movie-tag tag-animation">HOẠT HÌNH / HÀI HƯỚC</span>
+                    <div class="movie-title">Kẻ Trộm Mặt Trăng 4 (Despicable Me 4)</div>
+                    <div class="movie-desc">Siêu ác nhân hoàn lương Gru đối mặt với kẻ thù cũ Maxime Le Mal vượt ngục trả thù. Điểm nhấn là nhóm Mega Minions sở hữu huyết thanh siêu năng lực nhưng đầu óc vẫn vô cùng ngáo ngơ, mang lại những trận cười thả ga cho khán giả.</div>
+                </div>
+            </div>
+
+            <!-- PHIM 2: HÀNH ĐỘNG / BOM TẤN -->
+            <div class="movie-card">
+                <div class="movie-media">
+                    <iframe src="https://youtube.com" allowfullscreen></iframe>
+                </div>
+                <div class="movie-info">
+                    <span class="movie-tag tag-action">HÀNH ĐỘNG / ĐUA XE</span>
+                    <div class="movie-title">Quá Nhanh Quá Nguy Hiểm (Fast & Furious)</div>
+                    <div class="movie-desc">Hành trình nghẹt thở của Dominic Toretto và gia đình quái xế chống lại các thế lực tội phạm nguy hiểm xuyên quốc gia. Những pha quăng xe thể thao triệu đô cực gắt và rượt đuổi tốc độ cao đỉnh cao màn ảnh.</div>
+                </div>
+            </div>
+
+            <!-- PHIM 3: KHOA HỌC VIỄN TƯỞNG / QUÁI VẬT -->
+            <div class="movie-card">
+                <div class="movie-media">
+                    <iframe src="https://youtube.com" allowfullscreen></iframe>
+                </div>
+                <div class="movie-info">
+                    <span class="movie-tag tag-scifi">VIỄN TƯỞNG / KHỔNG LỒ</span>
+                    <div class="movie-title">Godzilla x Kong: Đế Chế Mới</div>
+                    <div class="movie-desc">Hai đại quái thú huyền thoại Godzilla và Kong bắt buộc phải gạt bỏ hiềm khích cũ, bắt tay lập liên minh để chống lại một mối đe dọa hủy diệt mới từ sâu trong lòng Trái Đất, giải cứu sự sống của toàn nhân loại.</div>
+                </div>
+            </div>
+
+            <!-- PHIM 4: KINH DỊ / GIẬT GÂN -->
+            <div class="movie-card">
+                <div class="movie-media">
+                    <iframe src="https://youtube.com" allowfullscreen></iframe>
+                </div>
+                <div class="movie-info">
+                    <span class="movie-tag tag-horror">KINH DỊ / TÂM LINH</span>
+                    <div class="movie-title">Ám Ảnh Kinh Hoàng (The Conjuring)</div>
+                    <div class="movie-desc">Dựa trên hồ sơ vụ án có thật của hai nhà ngoại cảm Ed và Lorraine Warren. Câu chuyện nghẹt thở về hành trình giải cứu một gia đình bị các thế lực quỷ dữ tà ác quấy phá trong căn nhà hoang sơ đầy bí ẩn.</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="index.html" class="btn-back">⬅ Quay về trang chủ</a>
+    </div>
 
 </body>
-</html>
+      </html>
+  
