@@ -18,19 +18,15 @@
     
     .container { max-width: 800px; margin: 20px auto; padding: 0 15px; box-sizing: border-box; }
     
-    /* Giao diện lưới chia danh sách phim */
-    .movie-grid {
-        display: flex; flex-direction: column; gap: 20px;
-    }
+    .movie-grid { display: flex; flex-direction: column; gap: 20px; }
     
-    /* Thiết kế thẻ phim (Movie Card) */
     .movie-card {
         background: #1f1f23; border-radius: 12px; overflow: hidden;
         border: 1px solid #333; display: flex; flex-direction: column;
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
     
-    /* Khung tỷ lệ video hoặc ảnh phim */
+    /* Khung tỷ lệ video chống lỗi trắng màn hình */
     .movie-media {
         position: relative; width: 100%; height: 0; padding-bottom: 56.25%;
         background-color: #000;
@@ -44,7 +40,6 @@
         display: inline-block; font-size: 11px; font-weight: bold; 
         padding: 3px 8px; border-radius: 4px; margin-bottom: 8px;
     }
-    /* Màu sắc riêng cho từng thể loại */
     .tag-animation { background-color: #ffe082; color: #6d4c41; }
     .tag-action { background-color: #ffcdd2; color: #b71c1c; }
     .tag-scifi { background-color: #b2ebf2; color: #006064; }
@@ -75,19 +70,18 @@
 
     <div class="container">
         
-        <!-- Khung tiện ích kiếm tiền Shopee đặt ở đầu danh sách -->
         <div class="cinema-tip">
             <strong>🍿 Góc Rạp Phim Tại Gia:</strong> Thưởng thức các bộ phim bom tấn với trải nghiệm màn hình 100 inch cực đỉnh ngay tại phòng ngủ bằng máy chiếu mini thông minh kết nối điện thoại.<br>
             <a href="https://shopee.vn" class="shop-link" target="_blank">👉 Xem giá Máy Chiếu Mini Điện Thoại bán chạy nhất trên Shopee</a>
         </div>
 
-        <!-- DANH SÁCH PHIM ĐA DẠNG -->
         <div class="movie-grid">
 
-            <!-- PHIM 1: HOẠT HÌNH (Giữ lại phim Minions cũ) -->
+            <!-- PHIM 1: HOẠT HÌNH -->
             <div class="movie-card">
                 <div class="movie-media">
-                    <iframe src="https://youtube.com" allowfullscreen></iframe>
+                    <!-- Sửa link sang hệ thống nocookie chống lỗi từ chối kết nối -->
+                    <iframe src="https://youtube-nocookie.com" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
                 <div class="movie-info">
                     <span class="movie-tag tag-animation">HOẠT HÌNH / HÀI HƯỚC</span>
@@ -96,10 +90,10 @@
                 </div>
             </div>
 
-            <!-- PHIM 2: HÀNH ĐỘNG / BOM TẤN -->
+            <!-- PHIM 2: HÀNH ĐỘNG -->
             <div class="movie-card">
                 <div class="movie-media">
-                    <iframe src="https://youtube.com" allowfullscreen></iframe>
+                    <iframe src="https://youtube-nocookie.com" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
                 <div class="movie-info">
                     <span class="movie-tag tag-action">HÀNH ĐỘNG / ĐUA XE</span>
@@ -108,10 +102,10 @@
                 </div>
             </div>
 
-            <!-- PHIM 3: KHOA HỌC VIỄN TƯỞNG / QUÁI VẬT -->
+            <!-- PHIM 3: KHOA HỌC VIỄN TƯỞNG -->
             <div class="movie-card">
                 <div class="movie-media">
-                    <iframe src="https://youtube.com" allowfullscreen></iframe>
+                    <iframe src="https://youtube-nocookie.com" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
                 <div class="movie-info">
                     <span class="movie-tag tag-scifi">VIỄN TƯỞNG / KHỔNG LỒ</span>
@@ -120,10 +114,10 @@
                 </div>
             </div>
 
-            <!-- PHIM 4: KINH DỊ / GIẬT GÂN -->
+            <!-- PHIM 4: KINH DỊ -->
             <div class="movie-card">
                 <div class="movie-media">
-                    <iframe src="https://youtube.com" allowfullscreen></iframe>
+                    <iframe src="https://youtube-nocookie.com" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
                 <div class="movie-info">
                     <span class="movie-tag tag-horror">KINH DỊ / TÂM LINH</span>
@@ -140,5 +134,5 @@
     </div>
 
 </body>
-                    </html>
-                    
+    </html>
+    
