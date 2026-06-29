@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mini Game Xếp Gạch Có Âm Thanh</title>
+<style>
+    html, body {
+        margin: 0; padding: 0; background-color: #0f1020; color: white;
+        font-family: Arial, sans-serif; overflow: hidden; text-align: center; user-select: none; touch-action: none;
+        width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .info { font-size: 18px; font-weight: bold; margin-bottom: 5px; color: #00e676; }
+    #tetrisCanvas {
+        background-color: #161730; display: block;
+        border: 4px solid #333; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    .controls {
+        width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; padding: 0 10px; box-sizing: border-box;
+    }
+    .row { display: flex; justify-content: space-between; gap: 8px; }
+    .btn-game {
+        flex: 1; height: 50px; background-color: #222545; border: 2px solid #00e676;
+        color: #00e676; font-size: 18px; font-weight: bold; border-radius: 10px; outline: none;
+    }
+    .btn-game:active { background-color: #00e676; color: black; }
+    .btn-rotate { background-color: #ff9100; border-color: #ff9100; color: white; }
+    .btn-rotate:active { background-color: white; color: black; }
+    .btn-back { display: inline-block; padding: 6px 16px; background-color: #ff5722; color: white; text-decoration: none; border-radius: 15px; font-size: 13px; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="info">Điểm: <span id="score">0</span></div>
+
+<canvas id="tetrisCanvas"></canvas>
+
+<div class="controls">
+    <div class="row">
+        <button class="btn-game btn-rotate" id="btnRotate">🔄 XOAY GẠCH</button>
+    </div>
+    <div class="row">
+        <button class="btn-game" id="btnLeft">◀ TRÁI</button>
+        <button class="btn-game" id="btnDown">▼ XUỐNG</button>
+        <button class="btn-game" id="btnRight">PHẢI ▶</button>
+    </div>
+</div>
+
+<a href="index.html" class="btn-back">⬅ Về trang chủ</a>
+
+<script>
+const canvas = document.getElementById("tetrisCanvas");
+const ctx = canvas.getContext("2d");
+const scoreEl = document.getElementById("score");
+
+const COLS = 10;
+const ROWS = 20;
+const BLOCK_SIZE = Math.min(Math.floor((window.innerHeight - 240) / ROWS), Math.floor((window.innerWidth - 40) / COLS));
+
+canvas.width = COLS * BLOCK_SIZE;
+canvas.height = ROWS * BLOCK_SIZE;
+
+// --- HỆ THỐNG ÂM THANH TỰ ĐỘNG CHỐNG LỖI ---
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
+function playSound(type) {
+    if (!audioCtx || audioCtx.state === 'suspended') return;
+    try {
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'move') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+        } else if (type === 'rotate') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(280, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+        } else if (type === 'clear') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        } else if (type === 'gameover') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(40, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+        }
+    } catch(e) {}
+}
+
+let score = 0;
+let gameOver = false;
+const board = Array.from({length: ROWS}, () => Array(COLS).fill(0));
+
+const SHAPES = [
+    [[1,1,1,1]],
+    [[0,1,0],[1,1,1]],
+    [[1,0,0],[1,1,1]],
+    [[0,0,1],[1,1,1]],
+    [[1,1],[1,1]],
+    [[1,1,0],[0,1,1]],
+    [[0,1,1],[1,1,0]]
+];
+const COLORS = ["#00e5ff", "#d500f9", "#ff9100", "#29b6f6", "#ffea00", "#ff1744", "#00e676"];
+
+let piece = { matrix: null, x: 0, y: 0, color: "" };
+
+function resetPiece() {
+    const id = Math.floor(Math.random() * SHAPES.length);
+    piece.matrix = SHAPES[id];
+    piece.color = COLORS[id];
+    piece.y = 0;
+    piece.x = Math.floor((COLS - piece.matrix[0].length) / 2);
+
+    if (checkCollision(piece.matrix, piece.x, piece.y)) {
+        gameOver = true;
+        playSound('gameover');
+    }
+}
+
+function checkCollision(matrix, offsetLeft, offsetTop) {
+    for (let r = 0; r < matrix.length; r++) {
+        for (let c = 0; c < matrix[r].length; c++) {
+            if (matrix[r][c] !== 0) {
+                let nextX = offsetLeft + c;
+                let nextY = offsetTop + r;
+                if (nextX < 0 || nextX >= COLS || nextY >= ROWS) return true;
+                if (nextY >= 0 && board[nextY][nextX] !== 0) return true;
+            }
+        }
+    }
+    return false;
+}
+
+function merge() {
+    piece.matrix.forEach((row, r) => {
+        row.forEach((value, c) => {
+            if (value !== 0) {
+                if (piece.y + r >= 0) {
+                    board[piece.y + r][piece.x + c] = piece.color;
+                }
+            }
+        });
+    });
+}
+
+function clearLines() {
+    let linesCleared = 0;
+    for (let r = ROWS - 1; r >= 0; r--) {
+        if (board[r].every(value => value !== 0)) {
+            board.splice(r, 1);
+            board.unshift(Array(COLS).fill(0));
+            linesCleared++;
+            r++;
+        }
+    }
+    if (linesCleared > 0) {
+        score += linesCleared * 10;
+        scoreEl.innerText = score;
+        playSound('clear');
+    }
+}
+
+function moveDown() {
+    piece.y++;
+    if (checkCollision(piece.matrix, piece.x, piece.y)) {
+        piece.y--;
+        merge();
+        clearLines();
+        resetPiece();
+    }
+}
+
+function rotate() {
+    const rotated = piece.matrix[0].map((_, i) => piece.matrix.map(row => row[i]).reverse());
+    let oldX = piece.x;
+    while (checkCollision(rotated, piece.x, piece.y)) {
+        piece.x += (piece.x > COLS / 2) ? -1 : 1;
+        if (Math.abs(piece.x - oldX) > 2) {
+            piece.x = oldX;
+            return;
+        }
+    }
+    piece.matrix = rotated;
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (board[r][c] !== 0) {
+                ctx.fillStyle = board[r][c];
+                ctx.fillRect(c * BLOCK_SIZE, r * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+            }
+        }
+    }
+
+    if (piece.matrix) {
+        ctx.fillStyle = piece.color;
+        piece.matrix.forEach((row, r) => {
+            row.forEach((value, c) => {
+                if (value !== 0) {
+                    ctx.fillRect((piece.x + c) * BLOCK_SIZE, (piece.y + r) * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+                }
+            });
+        });
+    }
+
+    if (gameOver) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "red"; ctx.font = "bold 20px Arial";
+        ctx.fillText("GAME OVER", canvas.width / 2 - 60, canvas.height / 2);
+        ctx.fillStyle = "white"; ctx.font = "14px Arial";
+        ctx.fillText("Bấm nút bất kỳ để chơi lại", canvas.width / 2 - 80, canvas.height / 2 + 30);
+    }
+}
+
+document.getElementById("btnLeft").addEventListener("pointerdown", (e) => { 
+    e.preventDefault(); initAudio(); 
+    if(gameOver){restart();} 
+    else if(!checkCollision(piece.matrix, piece.x - 1, piece.y)) { piece.x--; playSound('move'); }
+});
+document.getElementById("btnRight").addEventListener("pointerdown", (e) => { 
+    e.preventDefault(); initAudio(); 
+    if(gameOver){restart();} 
+    else if(!checkCollision(piece.matrix, piece.x + 1, piece.y)) { piece.x++; playSound('move'); }
+});
+document.getElementById("btnDown").addEventListener("pointerdown", (e) => { 
+    e.preventDefault(); initAudio(); 
+    if(gameOver){restart();} else { moveDown(); playSound('move'); }
+});
+document.getElementById("btnRotate").addEventListener("pointerdown", (e) => { 
+    e.preventDefault(); initAudio(); 
+    if(gameOver){restart();} else { rotate(); playSound('rotate'); }
+});
+
+function restart() {
+    for (let r = 0; r < ROWS; r++) board[r].fill(0);
+    score = 0; scoreEl.innerText = score;
+    gameOver = false; resetPiece();
+}
+
+let dropCounter = 0;
+let lastTime = 0;
+
+function update(time = 0) {
+    const deltaTime = time - lastTime;
+    lastTime = time;
+    if (!gameOver) {
+        dropCounter += deltaTime;
+        if (dropCounter > 500) {
+            moveDown();
+            dropCounter = 0;
+        }
+    }
+    draw();
+    requestAnimationFrame(update);
+}
+
+resetPiece();
+update();
+</script>
+</body>
+  </html>
+  
