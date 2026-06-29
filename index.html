@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Game</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Game</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <h1>🎮 MINI GAME</h1>
 
-<button onclick="startGame()">Bắt đầu chơi</button>
+<p>Đoán số từ <b>1 đến 10</b></p>
 
-<p id="text">Hãy nhấn nút để bắt đầu trò chơi!</p>
+<input type="number" id="guess" min="1" max="10" placeholder="Nhập số">
+
+<br><br>
+
+<button onclick="startGame()">Đoán</button>
+
+<button onclick="newGame()">Chơi lại</button>
+
+<h2 id="text"></h2>
 
 <script src="script.js"></script>
 
