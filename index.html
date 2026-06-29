@@ -9,52 +9,32 @@
         margin: 0; padding: 0; background-color: #0b0c10; color: #eee;
         font-family: 'Segoe UI', Arial, sans-serif;
     }
-    /* Thanh menu màu xanh nguyên bản của bạn */
+    /* Thanh menu màu xanh của bạn */
     nav {
         background-color: #1f2833;
-        padding: 18px; /* Tăng độ dày thanh menu */
+        padding: 18px;
         text-align: center;
         box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
     nav a {
         color: #66fcf1;
         text-decoration: none;
-        margin: 0 20px; /* Tăng khoảng cách giữa các mục */
+        margin: 0 20px;
         font-weight: bold;
-        font-size: 18px; /* Tăng cỡ chữ menu */
+        font-size: 18px;
         transition: 0.3s;
     }
     nav a:hover {
         color: #45f3ff;
     }
     
-    /* ĐÃ PHÓNG TO: Tăng kích thước khung chứa từ 1000px lên 1300px */
     .container { max-width: 1300px; margin: 30px auto; padding: 0 20px; box-sizing: border-box; text-align: center; }
-    
-    /* ĐÃ PHÓNG TO: Tăng kích thước Banner tối đa lên 1200px cho hoành tráng */
-    .banner-container {
-        position: relative; width: 100%; max-width: 1200px; margin: 20px auto; 
-        border-radius: 15px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    }
-    .banner-container img {
-        width: 100%; height: auto; display: block; object-fit: cover;
-    }
-    .banner-overlay {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.5); display: flex; flex-direction: column;
-        justify-content: center; align-items: center; color: white; padding: 20px;
-    }
-    /* ĐÃ PHÓNG TO: Tăng kích thước chữ tiêu đề chính lên 42px */
-    .banner-overlay h1 { margin: 0 0 15px 0; font-size: 42px; letter-spacing: 2px; color: #45f3ff; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); }
-    /* ĐÃ PHÓNG TO: Tăng kích thước chữ mô tả lên 18px */
-    .banner-overlay p { margin: 0; font-size: 18px; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); }
-
     .welcome-text { margin: 50px 0; font-size: 18px; color: #8892b0; line-height: 1.8; }
 </style>
 </head>
 <body>
 
-    <!-- THANH MENU CŨ (Đã liên kết mục Xem phim sang file phim.html) -->
+    <!-- THANH MENU (Đã liên kết mục Xem phim sang file phim.html) -->
     <nav>
         <a href="#">Mini Game</a>
         <a href="#">Nhà đất</a>
@@ -65,12 +45,12 @@
 
     <div class="container">
         
-        <!-- KHUNG ẢNH BANNER TRANG CHỦ TỰ CO GIÃN ĐẸP TRÊN ĐIỆN THOẠI -->
+        <!-- KHUNG ẢNH BANNER TRANG CHỦ TỰ CO GIÃN - ĐÃ FIX LINK ẢNH SIÊU NÉT -->
         <div style="width: 100%; max-width: 1200px; margin: 20px auto; padding: 0 10px; box-sizing: border-box;">
             <div style="background: #1f2833; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.5); padding: 20px; text-align: center;">
                 <h1 style="font-size: 24px; margin: 0 0 10px 0; color: #45f3ff; letter-spacing: 1px;">CHÀO MỪNG ĐẾN VỚI MINNI WORLD</h1>
                 <p style="font-size: 14px; color: #ccc; margin: 0 0 20px 0; line-height: 1.4;">Khám phá thế giới giải trí, tin tức việc làm & công cụ tiện ích miễn phí</p>
-                <img src="https://unsplash.com" alt="Minni World Banner" style="width: 100%; height: auto; border-radius: 8px; max-width: 600px;">
+                <img src="https://imgbox.com" alt="Minni World Banner" style="width: 100%; height: auto; border-radius: 8px; max-width: 600px; display: inline-block;">
             </div>
         </div>
         
