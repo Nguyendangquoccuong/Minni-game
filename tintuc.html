@@ -2,41 +2,138 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tin tức</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MINNI WORLD - Trang Tin Tức Tổng Hợp</title>
+<style>
+    /* Phong cách hiện đại, tối giản và sang trọng */
+    body {
+        margin: 0; padding: 0; background-color: #f4f6f9; color: #333;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    
+    /* Thanh điều hướng Header */
+    .header {
+        background: linear-gradient(135deg, #1e88e5, #1565c0); color: white;
+        padding: 20px 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .header h1 { margin: 0; font-size: 26px; letter-spacing: 1px; }
+    .header p { margin: 5px 0 0 0; font-size: 13px; color: #e3f2fd; }
+
+    /* Thanh Menu Danh Mục */
+    .nav-categories {
+        display: flex; justify-content: center; gap: 15px; background: #ffffff;
+        padding: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow-x: auto;
+    }
+    .cat-link {
+        text-decoration: none; color: #555; font-size: 14px; font-weight: bold;
+        padding: 6px 12px; border-radius: 20px; transition: all 0.2s;
+    }
+    .cat-link.active, .cat-link:hover {
+        background-color: #1e88e5; color: white;
+    }
+
+    /* Vùng chứa nội dung tin tức */
+    .main-container {
+        max-width: 800px; margin: 20px auto; padding: 0 15px; box-sizing: border-box;
+    }
+
+    /* Ô hiển thị từng bài báo (News Card) */
+    .news-card {
+        background: #ffffff; border-radius: 12px; overflow: hidden;
+        margin-bottom: 20px; box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+        display: flex; flex-direction: column; transition: transform 0.2s;
+    }
+    .news-card:active { transform: scale(0.99); }
+
+    /* Ảnh minh họa bài viết (Thay bằng các ảnh placeholder gọn nhẹ) */
+    .news-image {
+        width: 100%; height: 180px; background-color: #ddd;
+        background-size: cover; background-position: center;
+    }
+    
+    .news-content { padding: 15px; text-align: left; }
+    .news-tag {
+        display: inline-block; background: #e3f2fd; color: #1e88e5;
+        font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 4px; margin-bottom: 8px;
+    }
+    .news-title { margin: 0 0 8px 0; font-size: 18px; color: #111; line-height: 1.4; }
+    .news-desc { margin: 0 0 12px 0; font-size: 14px; color: #666; line-height: 1.5; }
+    
+    /* Nút bấm đọc tiếp */
+    .btn-read {
+        display: inline-block; text-decoration: none; color: #1e88e5;
+        font-size: 14px; font-weight: bold;
+    }
+
+    /* Nút quay về trang chính */
+    .footer { text-align: center; margin: 40px 0 30px 0; }
+    .btn-back {
+        display: inline-block; padding: 10px 24px; background-color: #333;
+        color: white; text-decoration: none; border-radius: 20px;
+        font-weight: bold; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+</style>
 </head>
 <body>
 
-<h1 style="color: #fff; text-align: center; padding-top: 20px;">📰 Tin tức mới</h1>
-
-<!-- Khung chứa danh sách tin tức cố định, không lo lỗi mạng -->
-<div id="news" style="max-width: 600px; margin: 20px auto; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; color: #333;">
-
-    <!-- Tin số 1 -->
-    <div style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
-        <h3 style="margin-top: 0; color: #0056b3; font-size: 1.2rem;">Chào mừng bạn đến với thế giới giải trí Minni World</h3>
-        <p style="font-size: 0.95rem; line-height: 1.4; color: #444;">Trang web tích hợp các tính năng giải trí hấp dẫn bao gồm Mini Game giải trí, chuyên mục Nhà đất, cập nhật Tin tức công nghệ đời sống và các Công cụ tiện ích hữu ích cho mọi người...</p>
-        <a href="index.html" style="color: #ff5722; font-weight: bold; text-decoration: none;">Xem chi tiết ➔</a>
+    <!-- Header trang Tin Tức -->
+    <div class="header">
+        <h1>📰 MINNI NEWS</h1>
+        <p>Cập nhật tin tức nóng hổi, công nghệ và giải trí mỗi ngày</p>
     </div>
 
-    <!-- Tin số 2 -->
-    <div style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
-        <h3 style="margin-top: 0; color: #0056b3; font-size: 1.2rem;">Ra mắt tính năng Mini Game phiên bản mới cực hay</h3>
-        <p style="font-size: 0.95rem; line-height: 1.4; color: #444;">Hệ thống trò chơi nhỏ (Mini Game) trên website vừa cập nhật giao diện mới mượt mà hơn, giúp người chơi có những phút giây thư giãn tuyệt vời ngay trên điện thoại di động...</p>
-        <a href="mini-game.html" style="color: #ff5722; font-weight: bold; text-decoration: none;">Chơi ngay ➔</a>
+    <!-- Thanh chuyển đổi danh mục tin nhanh -->
+    <div class="nav-categories">
+        <a href="#" class="cat-link active">Mới Nhất</a>
+        <a href="#" class="cat-link">Công Nghệ</a>
+        <a href="#" class="cat-link">Giải Trí</a>
+        <a href="#" class="cat-link">Đời Sống</a>
     </div>
 
-    <!-- Tin số 3 -->
-    <div style="margin-bottom: 10px; padding-bottom: 5px;">
-        <h3 style="margin-top: 0; color: #0056b3; font-size: 1.2rem;">Cập nhật chuyên mục Công cụ hỗ trợ học tập và làm việc</h3>
-        <p style="font-size: 0.95rem; line-height: 1.4; color: #444;">Chuyên mục Công cụ đang được hoàn thiện để mang đến các tiện ích tính toán nhanh, hỗ trợ đắc lực cho người dùng trong quá trình trải nghiệm hệ sinh thái Minni World...</p>
-        <a href="congcu.html" style="color: #ff5722; font-weight: bold; text-decoration: none;">Khám phá ➔</a>
+    <!-- Danh sách các bài viết tin tức mẫu -->
+    <div class="main-container">
+
+        <!-- Bài viết 1 -->
+        <div class="news-card">
+            <!-- Bạn có thể thay ảnh link bằng ảnh thật của bạn sau -->
+            <div class="news-image" style="background-image: url('https://picsum.photos');"></div>
+            <div class="news-content">
+                <span class="news-tag">CÔNG NGHỆ</span>
+                <h2 class="news-title">Trí tuệ nhân tạo thế hệ mới làm thay đổi cách lập trình web di động trong năm 2026</h2>
+                <p class="news-desc">Các hệ thống AI thông minh đang giúp người dùng bình thường tự tạo ra các ứng dụng và mini game giải trí trực tiếp trên điện thoại chỉ bằng vài câu lệnh trò chuyện đơn giản.</p>
+                <a href="#" class="btn-read">Đọc tiếp bài viết →</a>
+            </div>
+        </div>
+
+        <!-- Bài viết 2 -->
+        <div class="news-card">
+            <div class="news-image" style="background-image: url('https://picsum.photos');"></div>
+            <div class="news-content">
+                <span class="news-tag">GIẢI TRÍ</span>
+                <h2 class="news-title">Xu hướng phát triển mini game trên nền tảng web đang bùng nổ mạnh mẽ</h2>
+                <p class="news-desc">Không cần cài đặt rườm rà qua cửa hàng ứng dụng, người chơi hiện nay chuộng các tựa game xếp gạch, bắn bóng gọn nhẹ chạy trực tiếp bằng trình duyệt trên mạng xã hội.</p>
+                <a href="#" class="btn-read">Đọc tiếp bài viết →</a>
+            </div>
+        </div>
+
+        <!-- Bài viết 3 -->
+        <div class="news-card">
+            <div class="news-image" style="background-image: url('https://picsum.photos');"></div>
+            <div class="news-content">
+                <span class="news-tag">ĐỜI SỐNG</span>
+                <h2 class="news-title">Làm thế nào để tự xây dựng một thế giới giải trí cá nhân hiệu quả trên Internet?</h2>
+                <p class="news-desc">Chia sẻ các mẹo nhỏ để quản lý code và lưu trữ trang web cá nhân miễn phí thông qua dịch vụ GitHub Pages dành cho những người mới bắt đầu học làm web.</p>
+                <a href="#" class="btn-read">Đọc tiếp bài viết →</a>
+            </div>
+        </div>
+
     </div>
 
-</div>
-
-<p style="text-align: center;"><a href="index.html" style="color: #fff; font-weight: bold; text-decoration: none;">⬅ Về trang chủ</a></p>
+    <!-- Nút quay về trang chính điều hướng -->
+    <div class="footer">
+        <a href="index.html" class="btn-back">⬅ Quay về trang chủ</a>
+    </div>
 
 </body>
-</html>
+                    </html>
+                    
