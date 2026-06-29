@@ -3,136 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MINNI WORLD - Thế Giới Phim Ảnh Tổng Hợp</title>
+<title>MINNI CINEMA - Giao Diện Điện Ảnh Đẳng Cấp</title>
 <style>
+    /* Phong cách Netflix bóng đêm huyền bí */
     body {
-        margin: 0; padding: 0; background-color: #0b0c10; color: #eee;
-        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0; padding: 0; background-color: #06070d; color: #ffffff;
+        font-family: 'Segoe UI', Arial, sans-serif; -webkit-font-smoothing: antialiased;
     }
+    
+    /* Header rực rỡ hiệu ứng Neon */
     .header {
-        background: linear-gradient(135deg, #e50914, #9b050c); color: white;
-        padding: 25px 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        padding: 30px 15px 15px 15px; text-align: center;
+        background: linear-gradient(to bottom, rgba(229, 9, 20, 0.2), transparent);
     }
-    .header h1 { margin: 0; font-size: 24px; letter-spacing: 1px; }
-    .header p { margin: 5px 0 0 0; font-size: 13px; color: #ffcdd2; }
-    
-    .container { max-width: 800px; margin: 20px auto; padding: 0 15px; box-sizing: border-box; }
-    
-    .movie-grid { display: flex; flex-direction: column; gap: 20px; }
-    
-    .movie-card {
-        background: #1f1f23; border-radius: 12px; overflow: hidden;
-        border: 1px solid #333; display: flex; flex-direction: column;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    .header h1 { 
+        margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 2px; color: #e50914;
+        text-shadow: 0 0 10px rgba(229, 9, 20, 0.6);
     }
+    .header p { margin: 6px 0 0 0; font-size: 13px; color: #aaa; }
     
-    /* Khung tỷ lệ video chống lỗi trắng màn hình */
-    .movie-media {
-        position: relative; width: 100%; height: 0; padding-bottom: 56.25%;
-        background-color: #000;
-    }
-    .movie-media iframe {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
-    }
+    .container { max-width: 500px; margin: 0 auto; padding: 0 15px 100px 15px; box-sizing: border-box; }
     
-    .movie-info { padding: 15px; text-align: left; }
-    .movie-tag {
-        display: inline-block; font-size: 11px; font-weight: bold; 
-        padding: 3px 8px; border-radius: 4px; margin-bottom: 8px;
+    .section-title {
+        text-align: left; font-size: 16px; font-weight: bold; color: #fff;
+        margin: 20px 0 12px 0; border-left: 4px solid #e50914; padding-left: 8px;
     }
-    .tag-animation { background-color: #ffe082; color: #6d4c41; }
-    .tag-action { background-color: #ffcdd2; color: #b71c1c; }
-    .tag-scifi { background-color: #b2ebf2; color: #006064; }
-    .tag-horror { background-color: #e1bee7; color: #4a148c; }
 
-    .movie-title { margin: 0 0 8px 0; font-size: 18px; color: #fff; line-height: 1.4; font-weight: bold; }
-    .movie-desc { margin: 0; font-size: 13.5px; color: #ccc; text-align: justify; line-height: 1.5; }
-    
-    .cinema-tip {
-        background-color: #2b1d1f; border-left: 4px solid #e50914;
-        padding: 12px; border-radius: 8px; margin: 25px 0; font-size: 13px; text-align: left;
+    /* Lưới danh sách phim dạng Poster đứng cực xịn */
+    .movie-grid {
+        display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
     }
-    .shop-link { display: inline-block; margin-top: 10px; color: #e50914; text-decoration: none; font-weight: bold; }
     
-    .footer { text-align: center; margin: 40px 0; }
+    /* Thẻ Phim chuẩn rạp chiếu */
+    .movie-card {
+        background: #14151f; border-radius: 12px; overflow: hidden;
+        border: 1px solid #222533; position: relative;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.4); transition: transform 0.2s;
+    }
+    .movie-card:active { transform: scale(0.96); }
+    
+    /* Khung chứa ảnh Poster tỷ lệ 3:4 */
+    .poster-box {
+        position: relative; width: 100%; height: 0; padding-bottom: 135%;
+        background-color: #111;
+    }
+    .poster-img {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    
+    /* Biểu tượng nút Play mờ ảo đè lên ảnh */
+    .play-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;
+    }
+    .play-icon {
+        width: 45px; height: 45px; background: rgba(229, 9, 20, 0.9); border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;
+        box-shadow: 0 0 15px rgba(229, 9, 20, 0.5);
+    }
+
+    .movie-info { padding: 10px; text-align: left; }
+    .movie-title { font-size: 14px; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .movie-meta { font-size: 11px; color: #e50914; font-weight: 600; margin-top: 2px; }
+    
+    /* KHUNG POPUP XEM PHIM BẬT LÊN (MODAL SCREEN) */
+    .modal {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.95); z-index: 100; align-items: center; justify-content: center;
+        padding: 15px; box-sizing: border-box; backdrop-filter: blur(8px);
+    }
+    .modal-content {
+        width: 100%; max-width: 450px; background: #14151f; border-radius: 16px;
+        overflow: hidden; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .video-wrapper { position: relative; width: 100%; height: 0; padding-bottom: 56.25%; background: #000; }
+    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    
+    .modal-body { padding: 15px; text-align: left; }
+    .modal-title { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 6px; }
+    .modal-desc { font-size: 13px; color: #aaa; line-height: 1.5; text-align: justify; margin-bottom: 15px; }
+    .btn-close {
+        width: 100%; padding: 10px; background: #222; border: none; color: #fff;
+        font-weight: bold; border-radius: 8px; font-size: 14px;
+    }
+
+    /* Tiện ích mua hàng Shopee phong cách sang trọng */
+    .cinema-tip {
+        background: linear-gradient(135deg, #1f1112, #140809); border: 1px solid #401014;
+        padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: left;
+    }
+    .cinema-tip p { margin: 0; font-size: 13px; color: #ccc; line-height: 1.5; }
+    .shop-link { display: inline-block; margin-top: 8px; color: #e50914; text-decoration: none; font-weight: bold; font-size: 13px; }
+    
+    /* Nút quay về trang chủ cố định ở góc dưới */
     .btn-back {
-        display: inline-block; padding: 10px 24px; background-color: #333;
-        color: white; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px;
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        padding: 12px 30px; background-color: #e50914; color: white;
+        text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 14px;
+        box-shadow: 0 4px 15px rgba(229,9,20,0.4); z-index: 50;
     }
 </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>🎬 MINNI CINEMA</h1>
-        <p>Rạp phim tổng hợp - Cập nhật trailer và review các siêu phẩm điện ảnh</p>
+        <h1>MINNI CINEMA</h1>
+        <p>Trải nghiệm điện ảnh đỉnh cao, hình ảnh chuẩn rạp</p>
     </div>
 
     <div class="container">
         
         <div class="cinema-tip">
-            <strong>🍿 Góc Rạp Phim Tại Gia:</strong> Thưởng thức các bộ phim bom tấn với trải nghiệm màn hình 100 inch cực đỉnh ngay tại phòng ngủ bằng máy chiếu mini thông minh kết nối điện thoại.<br>
-            <a href="https://shopee.vn" class="shop-link" target="_blank">👉 Xem giá Máy Chiếu Mini Điện Thoại bán chạy nhất trên Shopee</a>
+            <p><strong>🍿 Rạp Phim Bỏ Túi:</strong> Thưởng thức trọn vẹn các siêu phẩm điện ảnh với màn hình chiếu 100 inch siêu nét ngay tại nhà bằng máy chiếu mini thông minh.</p>
+            <a href="https://shopee.vn" class="shop-link" target="_blank">👉 Khám phá máy chiếu mini giá tốt trên Shopee</a>
         </div>
 
+        <div class="section-title">PHIM BOM TẤN NỔI BẬT</div>
+
+        <!-- LƯỚI PHIM POSTER DỌC CHUẨN NETFLIX -->
         <div class="movie-grid">
 
-            <!-- PHIM 1: HOẠT HÌNH -->
-            <div class="movie-card">
-                <div class="movie-media">
-                    <!-- Sửa link sang hệ thống nocookie chống lỗi từ chối kết nối -->
-                    <iframe src="https://youtube-nocookie.com" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <!-- PHIM 1 -->
+            <div class="movie-card" onclick="openModal('Kẻ Trộm Mặt Trăng 4', 'Siêu ác nhân hoàn lương Gru đối mặt với kẻ thù cũ Maxime Le Mal vượt ngục trả thù. Điểm nhấn là nhóm Mega Minions sở hữu huyết thanh siêu năng lực nhưng đầu óc vẫn vô cùng ngáo ngơ, mang lại những trận cười thả ga cho khán giả.', 'https://youtube-nocookie.com')">
+                <div class="poster-box">
+                    <img class="poster-img" src="https://unsplash.com" alt="Minions">
+                    <div class="play-overlay"><div class="play-icon">▶</div></div>
                 </div>
                 <div class="movie-info">
-                    <span class="movie-tag tag-animation">HOẠT HÌNH / HÀI HƯỚC</span>
-                    <div class="movie-title">Kẻ Trộm Mặt Trăng 4 (Despicable Me 4)</div>
-                    <div class="movie-desc">Siêu ác nhân hoàn lương Gru đối mặt với kẻ thù cũ Maxime Le Mal vượt ngục trả thù. Điểm nhấn là nhóm Mega Minions sở hữu huyết thanh siêu năng lực nhưng đầu óc vẫn vô cùng ngáo ngơ, mang lại những trận cười thả ga cho khán giả.</div>
+                    <div class="movie-title">Kẻ Trộm Mặt Trăng 4</div>
+                    <div class="movie-meta">Hoạt Hình / Hài Hước</div>
                 </div>
             </div>
 
-            <!-- PHIM 2: HÀNH ĐỘNG -->
-            <div class="movie-card">
-                <div class="movie-media">
-                    <iframe src="https://youtube-nocookie.com" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <!-- PHIM 2 -->
+            <div class="movie-card" onclick="openModal('Quá Nhanh Quá Nguy Hiểm', 'Hành trình nghẹt thở của Dominic Toretto và gia đình quái xế chống lại các thế lực tội phạm nguy hiểm xuyên quốc gia. Những pha quăng xe thể thao triệu đô cực gắt và rượt đuổi tốc độ cao đỉnh cao màn ảnh.', 'https://youtube-nocookie.com')">
+                <div class="poster-box">
+                    <img class="poster-img" src="https://unsplash.com" alt="Fast">
+                    <div class="play-overlay"><div class="play-icon">▶</div></div>
                 </div>
                 <div class="movie-info">
-                    <span class="movie-tag tag-action">HÀNH ĐỘNG / ĐUA XE</span>
-                    <div class="movie-title">Quá Nhanh Quá Nguy Hiểm (Fast & Furious)</div>
-                    <div class="movie-desc">Hành trình nghẹt thở của Dominic Toretto và gia đình quái xế chống lại các thế lực tội phạm nguy hiểm xuyên quốc gia. Những pha quăng xe thể thao triệu đô cực gắt và rượt đuổi tốc độ cao đỉnh cao màn ảnh.</div>
+                    <div class="movie-title">Fast & Furious</div>
+                    <div class="movie-meta">Hành Động / Đua Xe</div>
                 </div>
             </div>
 
-            <!-- PHIM 3: KHOA HỌC VIỄN TƯỞNG -->
-            <div class="movie-card">
-                <div class="movie-media">
-                    <iframe src="https://youtube-nocookie.com" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <!-- PHIM 3 -->
+            <div class="movie-card" onclick="openModal('Godzilla x Kong', 'Hai đại quái thú huyền thoại Godzilla và Kong bắt buộc phải gạt bỏ hiềm khích cũ, bắt tay lập liên minh để chống lại một mối đe dọa hủy diệt mới từ sâu trong lòng Trái Đất, giải cứu sự sống của toàn nhân loại.', 'https://youtube-nocookie.com')">
+                <div class="poster-box">
+                    <img class="poster-img" src="https://unsplash.com" alt="Godzilla">
+                    <div class="play-overlay"><div class="play-icon">▶</div></div>
                 </div>
                 <div class="movie-info">
-                    <span class="movie-tag tag-scifi">VIỄN TƯỞNG / KHỔNG LỒ</span>
-                    <div class="movie-title">Godzilla x Kong: Đế Chế Mới</div>
-                    <div class="movie-desc">Hai đại quái thú huyền thoại Godzilla và Kong bắt buộc phải gạt bỏ hiềm khích cũ, bắt tay lập liên minh để chống lại một mối đe dọa hủy diệt mới từ sâu trong lòng Trái Đất, giải cứu sự sống của toàn nhân loại.</div>
+                    <div class="movie-title">Godzilla x Kong</div>
+                    <div class="movie-meta">Viễn Tưởng / Quái Vật</div>
                 </div>
             </div>
 
-            <!-- PHIM 4: KINH DỊ -->
-            <div class="movie-card">
-                <div class="movie-media">
-                    <iframe src="https://youtube-nocookie.com" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <!-- PHIM 4 -->
+            <div class="movie-card" onclick="openModal('Ám Ảnh Kinh Hoàng', 'Dựa trên hồ sơ vụ án có thật của hai nhà ngoại cảm Ed và Lorraine Warren. Câu chuyện nghẹt thở về hành trình giải cứu một gia đình bị các thế lực quỷ dữ tà ác quấy phá trong căn nhà hoang sơ đầy bí ẩn.', 'https://youtube-nocookie.com')">
+                <div class="poster-box">
+                    <img class="poster-img" src="https://unsplash.com" alt="Kinh di">
+                    <div class="play-overlay"><div class="play-icon">▶</div></div>
                 </div>
                 <div class="movie-info">
-                    <span class="movie-tag tag-horror">KINH DỊ / TÂM LINH</span>
-                    <div class="movie-title">Ám Ảnh Kinh Hoàng (The Conjuring)</div>
-                    <div class="movie-desc">Dựa trên hồ sơ vụ án có thật của hai nhà ngoại cảm Ed và Lorraine Warren. Câu chuyện nghẹt thở về hành trình giải cứu một gia đình bị các thế lực quỷ dữ tà ác quấy phá trong căn nhà hoang sơ đầy bí ẩn.</div>
+                    <div class="movie-title">The Conjuring</div>
+                    <div class="movie-meta">Kinh Dị / Tâm Linh</div>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <div class="footer">
-        <a href="index.html" class="btn-back">⬅ Quay về trang chủ</a>
+    <!-- KHUNG BẬT LÊN XEM VIDEO (MODAL SCREEN HTML) -->
+    <div class="modal" id="videoModal">
+        <div class="modal-content">
+            <div class="video-wrapper">
+                <iframe id="modalIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="modal-body">
+                <div class="modal-title" id="modalTitle">Tên Phim</div>
+                <div class="modal-desc" id="modalDesc">Mô tả phim...</div>
+                <button class="btn-close" onclick="closeModal()">ĐÓNG CỬA SỔ XEM</button>
+            </div>
+        </div>
     </div>
 
-</body>
-    </html>
+    <a href="index.html" class="btn-back">⬅ Về trang chủ</a>
+
+<script>
+    const modal = document.getElementById('videoModal');
+    const modalIframe = document.getElementById('modalIframe');
     
