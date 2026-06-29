@@ -46,7 +46,7 @@
     <button class="btn-ctrl" id="btnRight">PHẢI ▶</button>
 </div>
 
-<div style="padding: 3px; font-size: 13px; color: #888;">Chạm vào nửa trên màn hình để BẮN ĐẠN!</div>
+<div style="padding: 3px; font-size: 13px; color: #888;">Chạm vào vùng chơi phía trên để BẮN ĐẠN!</div>
 <a href="index.html" class="btn-back">⬅ Về trang chủ</a>
 
 <script>
@@ -74,7 +74,7 @@ const player = {
     width: 40,
     height: 40,
     color: "#00E676",
-    speed: 10 
+    speed: 8 
 };
 
 let bullets = [];        
@@ -107,17 +107,18 @@ canvas.addEventListener("pointerdown", function(e) {
     if (gameOver) { resetGame(); return; }
     if (levelUpgraded) { nextLevel(); return; }
 
+    // Bắn 3 tia đạn xịn cùng lúc
     bullets.push({ x: player.x + player.width/2 - 4, y: player.y, width: 8, height: 20, color: "#FFEA00", vx: 0, vy: -12 });
     bullets.push({ x: player.x, y: player.y, width: 8, height: 20, color: "#FFEA00", vx: -1.5, vy: -11 });
     bullets.push({ x: player.x + player.width - 8, y: player.y, width: 8, height: 20, color: "#FFEA00", vx: 1.5, vy: -11 });
 });
 
 function createExplosion(x, y, color = "#FF9100") {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 12; i++) {
         particles.push({
             x: x, y: y,
-            vx: (Math.random() - 0.5) * 5,
-            vy: (Math.random() - 0.5) * 5,
+            vx: (Math.random() - 0.5) * 6,
+            vy: (Math.random() - 0.5) * 6,
             radius: Math.random() * 3 + 2,
             color: color,
             alpha: 1
@@ -134,6 +135,7 @@ function updateHPDisplay() {
 function resetGame() {
     score = 0; level = 1; targetScore = 100; enemySpeed = 0.8; enemyBulletSpeed = 1.3;
     scoreEl.innerText = score; targetScoreEl.innerText = targetScore; levelEl.innerText = level;
+    hp = 3;
     updateHPDisplay();
     bullets = []; enemyBullets = []; enemies = []; items = []; particles = [];
     player.x = canvas.width / 2 - 20;
@@ -145,7 +147,8 @@ function nextLevel() {
     level++;
     score = 0;
     targetScore = 100 + level * 50; 
-    enemySpeed += 0.15; 
+    enemySpeed += 0.2; 
+    enemyBulletSpeed += 0.2;
     
     scoreEl.innerText = score; targetScoreEl.innerText = targetScore; levelEl.innerText = level;
     bullets = []; enemyBullets = []; enemies = []; items = []; particles = [];
@@ -178,39 +181,49 @@ function update() {
     ctx.fillStyle = player.color; ctx.fillRect(player.x, player.y, player.width, player.height);
     ctx.fillStyle = "#FFF"; ctx.fillRect(player.x + player.width/2 - 4, player.y - 12, 8, 12);
 
-    // Đạn của bạn bay
-    bullets.forEach((b, bIndex) => {
+    // Đạn của bạn bay (Vòng lặp ngược để tránh lỗi xóa phần tử)
+    for (let bIndex = bullets.length - 1; bIndex >= 0; bIndex--) {
+        let b = bullets[bIndex];
         b.x += b.vx; b.y += b.vy;
         ctx.fillStyle = b.color; ctx.fillRect(b.x, b.y, b.width, b.height);
-        if (b.y < 0 || b.x < 0 || b.x > canvas.width) bullets.splice(bIndex, 1);
-    });
+        if (b.y < 0 || b.x < 0 || b.x > canvas.width) {
+            bullets.splice(bIndex, 1);
+        }
+    }
 
     // Đạn địch bay xuống
-    enemyBullets.forEach((eb, ebIndex) => {
+    for (let ebIndex = enemyBullets.length - 1; ebIndex >= 0; ebIndex--) {
+        let eb = enemyBullets[ebIndex];
         eb.y += eb.speed;
         ctx.fillStyle = eb.color; ctx.fillRect(eb.x, eb.y, eb.width, eb.height);
 
+        // Đạn địch trúng người chơi
         if (eb.x < player.x + player.width && eb.x + eb.width > player.x && eb.y < player.y + player.height && eb.y + eb.height > player.y) {
             enemyBullets.splice(ebIndex, 1);
             hp--; updateHPDisplay();
             createExplosion(player.x + player.width/2, player.y + player.height/2, "#FF1744");
             if (hp <= 0) gameOver = true;
+            continue;
         }
-        if (eb.y > canvas.height) enemyBullets.splice(ebIndex, 1);
-    });
+        if (eb.y > canvas.height) {
+            enemyBullets.splice(ebIndex, 1);
+        }
+    }
 
     // Quân địch xuất hiện thưa thớt dễ chịu
     spawnTimer++;
-    if (spawnTimer % Math.max(80, 140 - level * 5) === 0) {
+    if (spawnTimer % Math.max(60, 120 - level * 5) === 0) {
         enemies.push({ x: Math.random() * (canvas.width - 35), y: -35, width: 35, height: 35, color: "#FF1744" });
     }
 
     // Hộp cứu thương rơi
-    if (spawnTimer % 180 === 0 && hp < 5) {
+    if (spawnTimer % 250 === 0 && hp < 5) {
         items.push({ x: Math.random() * (canvas.width - 25), y: -25, size: 25 });
     }
 
-    items.forEach((item, iIndex) => {
+    // Xử lý vật phẩm hồi máu
+    for (let iIndex = items.length - 1; iIndex >= 0; iIndex--) {
+        let item = items[iIndex];
         item.y += 1.5;
         ctx.fillStyle = "#FFF"; ctx.fillRect(item.x, item.y, item.size, item.size);
         ctx.fillStyle = "#FF1744";
@@ -219,26 +232,17 @@ function update() {
 
         if (item.x < player.x + player.width && item.x + item.size > player.x && item.y < player.y + player.height && item.y + item.size > player.y) {
             items.splice(iIndex, 1);
-            hp++; updateHPDisplay();
+            if (hp < 5) { hp++; updateHPDisplay(); }
+            continue;
         }
         if (item.y > canvas.height) items.splice(iIndex, 1);
-    });
+    }
 
-    // Quản lý xe tăng địch
-    enemies.forEach((enemy, eIndex) => {
+    // QUẢN LÝ XE TĂNG ĐỊCH VÀ XỬ LÝ VA CHẠM ĐẠN (Đoạn mã được hoàn thiện ở đây)
+    for (let eIndex = enemies.length - 1; eIndex >= 0; eIndex--) {
+        let enemy = enemies[eIndex];
         enemy.y += enemySpeed;
         ctx.fillStyle = enemy.color; ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
 
-        if (Math.random() < 0.003) {
-            enemyBullets.push({ x: enemy.x + enemy.width/2 - 3, y: enemy.y + enemy.height, width: 6, height: 12, color: "#FF1744", speed: enemyBulletSpeed });
-        }
-
-        if (enemy.y + enemy.height >= canvas.height) {
-            enemies.splice(eIndex, 1);
-            hp--; updateHPDisplay();
-            if (hp <= 0) gameOver = true;
-        }
-
-        bullets.forEach((b, bIndex) => {
-            if (b.x < enemy.x + enemy.width && b.x + b.width > enemy.x && b.y < enemy.y + enemy.height && b.y + b.height > enemy.y) {
+        // Địch ngẫu nhiên bắn đạn xuống
     
