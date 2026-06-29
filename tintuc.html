@@ -14,41 +14,49 @@
 <p><a href="index.html">⬅ Về trang chủ</a></p>
 
 <script>
-const RSS =
-"https://api.allorigins.win/raw?url=" +
-encodeURIComponent("https://vnexpress.net/rss/tin-moi-nhat.rss");
+const RSS = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://vnexpress.net/rss/tin-moi-nhat.rss");
 
 fetch(RSS)
-.then(r => r.text())
-.then(str => new window.DOMParser().parseFromString(str,"text/xml"))
+.then(r => {
+    if (!r.ok) throw new Error("Mạng lỗi");
+    return r.text();
+})
+.then(str => new window.DOMParser().parseFromString(str, "text/xml"))
 .then(data => {
-
     const items = data.querySelectorAll("item");
     const news = document.getElementById("news");
 
+    if (items.length === 0) {
+        news.innerHTML = "Không tìm thấy bài viết nào.";
+        return;
+    }
+
     news.innerHTML = "";
 
-    items.forEach((item,index)=>{
-        if(index>=10) return;
+    items.forEach((item, index) => {
+        if (index >= 10) return;
 
-        const title = item.querySelector("title").textContent;
-        const link = item.querySelector("link").textContent;
-        const desc = item.querySelector("description").textContent
-            .replace(/<[^>]+>/g,"")
-            .substring(0,150);
+        const title = item.querySelector("title") ? item.querySelector("title").textContent : "Không có tiêu đề";
+        const link = item.querySelector("link") ? item.querySelector("link").textContent : "#";
+        
+        let desc = "Không có mô tả";
+        if (item.querySelector("description")) {
+            desc = item.querySelector("description").textContent
+                .replace(/<[^>]+>/g, "")
+                .substring(0, 150);
+        }
 
         news.innerHTML += `
-        <div style="margin-bottom:20px;border-bottom:1px solid #ccc;padding-bottom:10px">
-            <h3>${title}</h3>
-            <p>${desc}...</p>
-            <a href="${link}" target="_blank">Đọc tiếp</a>
+        <div style="margin-bottom:20px; border-bottom:1px solid #ccc; padding-bottom:10px;">
+            <h3 style="color:#000;">${title}</h3>
+            <p style="color:#333;">${desc}...</p>
+            <a href="${link}" target="_blank" style="color:#007bff; font-weight:bold;">Đọc tiếp</a>
         </div>`;
     });
-
 })
-.catch(err=>{
-    document.getElementById("news").innerHTML =
-    "Không tải được tin tức.";
+.catch(err => {
+    console.error(err);
+    document.getElementById("news").innerHTML = "Không tải được tin tức. Vui lòng thử lại sau.";
 });
 </script>
 
