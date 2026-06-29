@@ -3,33 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Mini Game Xe Tăng - Sửa Lỗi Triệt Để</title>
+<title>Siêu Chiến Dịch Xe Tăng - Sửa Lỗi Hiển Thị</title>
 <style>
     html, body {
         margin: 0; padding: 0; background-color: #080810; color: white;
         font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; text-align: center; user-select: none;
-        touch-action: none; width: 100%; height: 100%;
+        touch-action: none; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
     .minigame-container {
-        position: relative; width: 100%; height: 100%; overflow: hidden;
+        position: relative; width: 100vw; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center;
     }
     .info-bar { 
         position: absolute; top: 0; left: 0; width: 100%;
         padding: 12px 0; font-size: 15px; font-weight: bold; 
-        background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0)); 
+        background: linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0)); 
         z-index: 10; display: flex; justify-content: space-around; box-sizing: border-box;
     }
-    #gameCanvas { background-color: #0b0c16; display: block; width: 100%; height: 100%; }
+    #gameCanvas { background-color: #0b0c16; display: block; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
     
     .guide-overlay {
-        position: absolute; bottom: 80px; left: 0; width: 100%;
-        font-size: 11px; color: rgba(255,255,255,0.35); z-index: 9; pointer-events: none;
-        letter-spacing: 0.5px; line-height: 1.5;
+        position: absolute; bottom: 75px; left: 0; width: 100%;
+        font-size: 11px; color: rgba(255,255,255,0.4); z-index: 9; pointer-events: none;
+        letter-spacing: 0.5px; line-height: 1.5; text-shadow: 1px 1px 2px #000;
     }
     .btn-back {
         position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
         padding: 10px 24px; background-color: #ff5722; color: white;
         text-decoration: none; border-radius: 20px; font-size: 14px; font-weight: bold; z-index: 10;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
 </style>
 </head>
@@ -59,14 +60,21 @@ const targetScoreEl = document.getElementById("targetScore");
 const levelEl = document.getElementById("level");
 const hpEl = document.getElementById("hp");
 
+// ĐỊNH NGHĨA KHUNG HÌNH ẢO (VIRTUAL RESOLUTION) CỐ ĐỊNH CHỐNG TRÀN MÀN HÌNH
+const V_WIDTH = 400;
+const V_HEIGHT = 700;
+let scale = 1;
+
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Tính toán tỷ lệ co giãn tối ưu để game luôn nằm trong màn hình thiết bị
+    scale = Math.min(window.innerWidth / V_WIDTH, window.innerHeight / V_HEIGHT);
+    canvas.width = V_WIDTH * scale;
+    canvas.height = V_HEIGHT * scale;
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// CÔ LẬP HỆ THỐNG ÂM THANH AN TOÀN TUYỆT ĐỐI
+// HỆ THỐNG ÂM THANH AN TOÀN
 let audioCtx = null;
 let musicInterval = null;
 
@@ -81,21 +89,21 @@ function playSound(type) {
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(400, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
             osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         } else if (type === 'explosion') {
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(100, audioCtx.currentTime);
             osc.frequency.linearRampToValueAtTime(10, audioCtx.currentTime + 0.2);
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
             osc.start(); osc.stop(audioCtx.currentTime + 0.2);
         } else if (type === 'item') {
             osc.type = 'sine';
             osc.frequency.setValueAtTime(350, audioCtx.currentTime);
             osc.frequency.setValueAtTime(700, audioCtx.currentTime + 0.07);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
             osc.start(); osc.stop(audioCtx.currentTime + 0.18);
         }
@@ -105,7 +113,7 @@ function playSound(type) {
 function startBackgroundMusic() {
     if (musicInterval) clearInterval(musicInterval);
     musicInterval = setInterval(() => {
-        if (!audioCtx || gameOver || levelUpgraded || gameStartScreen) return;
+        if (!audioCtx || gameOver || levelUpgraded) return;
         try {
             let notes = [130.81, 146.83, 164.81, 196.00];
             let note = notes[Math.floor(Math.random() * notes.length)];
@@ -114,48 +122,49 @@ function startBackgroundMusic() {
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(note, audioCtx.currentTime);
             osc.connect(gain); gain.connect(audioCtx.destination);
-            gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.012, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
             osc.start(); osc.stop(audioCtx.currentTime + 0.25);
         } catch(e) {}
-    }, 360);
+    }, 380);
 }
 
-// KHỞI TẠO CÁC BIẾN CHẠY GAME
+// KHỞI TẠO BIẾN DỰA TRÊN TỌA ĐỘ ẢO BIỂU DIỄN
 let score = 0; let level = 1; let targetScore = 100; let hp = 5; 
-let gameOver = false; let levelUpgraded = false; let gameStartScreen = true;
+let gameOver = false; let levelUpgraded = false;
 
 const player = {
-    x: canvas.width / 2 - 14, y: canvas.height - 140, // Đẩy xe cao hơn để không bị đè bởi ngón tay và nút quay về
-    width: 28, height: 28, color: "#00E676", speed: 5.5,
+    x: V_WIDTH / 2 - 15, 
+    y: V_HEIGHT - 130, // Vị trí an toàn tuyệt đối luôn hiển thị trên màn hình
+    width: 30, height: 30, color: "#00E676", speed: 5.5,
     weaponLevel: 1, powerupTimer: 0, maxPowerupTime: 420
 };
 
 let bullets = []; let enemyBullets = []; let enemies = []; let items = []; let particles = [];      
-let enemyBaseSpeed = 0.55; let enemyBulletSpeed = 1.1; let spawnTimer = 0;
+let enemyBaseSpeed = 0.6; let enemyBulletSpeed = 1.1; let spawnTimer = 0;
 let moveLeft = false; let moveRight = false; const activeTouches = {};
 
-// SỰ KIỆN ĐIỀU KHIỂN CẢM ỨNG AN TOÀN
+// SỰ KIỆN CẢM ỨNG ĐƯỢC CHUYỂN ĐỔI TỶ LỆ THEO KHUNG CHUẨN
 window.addEventListener("pointerdown", (e) => {
     e.preventDefault();
     
-    // Khởi tạo hệ thống âm thanh trễ khi có tương tác thực tế từ người dùng
     if (!audioCtx) {
         try {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             startBackgroundMusic();
         } catch(err) {}
     }
-    
-    if (gameStartScreen) { 
-        gameStartScreen = false; 
-        return; 
-    }
 
-    activeTouches[e.pointerId] = { x: e.clientX, y: e.clientY };
+    // Quy đổi tọa độ click thực tế sang tọa độ ảo trong game
+    let rect = canvas.getBoundingClientRect();
+    let touchX = (e.clientX - rect.left) / scale;
+    let touchY = (e.clientY - rect.top) / scale;
+
+    activeTouches[e.pointerId] = { x: touchX, y: touchY };
     checkControls();
     
-    if (e.clientY < canvas.height * 0.65) {
+    // Sử dụng tỷ lệ tọa độ ảo 65% chiều cao khung chơi để chia vùng bắn
+    if (touchY < V_HEIGHT * 0.65 && touchY >= 0 && touchX >= 0 && touchX <= V_WIDTH) {
         if (gameOver) { resetGame(); return; }
         if (levelUpgraded) { nextLevel(); return; }
         fireBullet();
@@ -165,7 +174,11 @@ window.addEventListener("pointerdown", (e) => {
 window.addEventListener("pointermove", (e) => {
     e.preventDefault();
     if (activeTouches[e.pointerId]) {
-        activeTouches[e.pointerId] = { x: e.clientX, y: e.clientY };
+        let rect = canvas.getBoundingClientRect();
+        activeTouches[e.pointerId] = { 
+            x: (e.clientX - rect.left) / scale, 
+            y: (e.clientY - rect.top) / scale 
+        };
         checkControls();
     }
 });
@@ -182,8 +195,8 @@ function checkControls() {
     moveLeft = false; moveRight = false;
     for (let id in activeTouches) {
         let touch = activeTouches[id];
-        if (touch.y >= canvas.height * 0.65) {
-            if (touch.x < canvas.width / 2) moveLeft = true;
+        if (touch.y >= V_HEIGHT * 0.65) {
+            if (touch.x < V_WIDTH / 2) moveLeft = true;
             else moveRight = true;
         }
     }
@@ -222,25 +235,4 @@ function drawTank(x, y, width, height, baseColor, isEnemy = false, type = 'norma
     ctx.restore();
 }
 
-function createExplosion(x, y, color = "#FF9100") {
-    playSound('explosion');
-    for (let i = 0; i < 8; i++) {
-        particles.push({
-            x: x, y: y, vx: (Math.random() - 0.5) * 4.5, vy: (Math.random() - 0.5) * 4.5,
-            radius: Math.random() * 2 + 1, color: color, alpha: 1
-        });
-    }
-}
-
-function updateHPDisplay() {
-    let hearts = "";
-    for (let i = 0; i < hp; i++) hearts += "❤️";
-    hpEl.innerText = hearts || "💀";
-}
-
-function resetGame() {
-    score = 0; level = 1; targetScore = 100; hp = 5;
-    scoreEl.innerText = score; targetScoreEl.innerText = targetScore; levelEl.innerText = level;
-    updateHPDisplay(); player.weaponLevel = 1; player.powerupTimer = 0;
-    bullets = []; enemyBullets = []; enemies = []; items = []; particles = [];
     
