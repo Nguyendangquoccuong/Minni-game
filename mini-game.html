@@ -3,50 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Game Xe Tăng - Phím Cảm Ứng Xịn</title>
+<title>Siêu Chiến Dịch Xe Tăng - Toàn Màn Hình</title>
 <style>
     body {
-        margin: 0; padding: 0; background-color: #111; color: white;
+        margin: 0; padding: 0; background-color: #0b0b16; color: white;
         font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; text-align: center; user-select: none;
-        touch-action: none; /* Ngăn chặn trình duyệt bị kéo cuộn màn hình khi đang chơi */
+        touch-action: none;
     }
-    .info { padding: 12px; font-size: 18px; font-weight: bold; background: #000; border-bottom: 2px solid #333; }
-    #gameCanvas { background-color: #1a1a2e; display: block; margin: 0 auto; }
+    .info { 
+        position: absolute; top: 0; left: 0; width: 100%;
+        padding: 12px 0; font-size: 16px; font-weight: bold; 
+        background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0)); 
+        z-index: 10; display: flex; justify-content: space-around; box-sizing: border-box;
+    }
+    #gameCanvas { background-color: #0f1123; display: block; }
     
-    /* Giao diện bộ nút điều khiển cảm ứng to rõ, chống bấm trượt */
-    .controls {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 10px 15px; background: #000; height: 95px; box-sizing: border-box;
-    }
-    .btn-ctrl {
-        width: 46%; height: 75px; background-color: #222; border: 3px solid #00e676;
-        color: #00e676; font-size: 26px; font-weight: bold; border-radius: 18px;
-        outline: none; transition: background-color 0.1s, color 0.1s;
-        -webkit-tap-highlight-color: transparent; /* Xóa khung viền vàng mặc định của trình duyệt khi chạm */
-    }
-    /* Hiệu ứng chớp sáng đổi màu khi ngón tay đang chạm giữ trên màn hình */
-    .btn-ctrl:active { 
-        background-color: #00e676 !important; 
-        color: black !important; 
-    }
     .btn-back {
-        display: inline-block; padding: 10px 20px; background-color: #ff5722;
-        color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 5px;
+        position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+        padding: 8px 18px; background-color: rgba(255, 87, 34, 0.85);
+        color: white; text-decoration: none; border-radius: 20px; font-size: 13px; font-weight: bold;
+        z-index: 10; border: 1px solid #ff7043; backdrop-filter: blur(4px);
+    }
+    .guide-text {
+        position: absolute; bottom: 60px; left: 0; width: 100%;
+        font-size: 12px; color: rgba(255,255,255,0.4); z-index: 9; pointer-events: none;
     }
 </style>
 </head>
 <body>
 
-<div class="info">Màn: <span id="level" style="color: #00e676;">1</span> | Điểm: <span id="score">0</span>/<span id="targetScore">100</span> | Mạng: <span id="hp" style="color: #ff5252;">❤️❤️❤️</span></div>
-<canvas id="gameCanvas"></canvas>
-
-<!-- Bộ nút điều khiển cảm ứng tối ưu cho hai ngón cái -->
-<div class="controls">
-    <button class="btn-ctrl" id="btnLeft">◀ TRÁI</button>
-    <button class="btn-ctrl" id="btnRight">PHẢI ▶</button>
+<div class="info">
+    <div>Màn: <span id="level" style="color: #00e676;">1</span></div>
+    <div>Điểm: <span id="score" style="color: #ffea00;">0</span>/<span id="targetScore">100</span></div>
+    <div>Mạng: <span id="hp">❤️❤️❤️</span></div>
 </div>
 
-<div style="padding: 3px; font-size: 13px; color: #888;">Chạm vào vùng chơi phía trên để BẮN ĐẠN!</div>
+<canvas id="gameCanvas"></canvas>
+
+<div class="guide-text">Chạm NỬA TRÊN để BẮN | Giữ NỬA DƯỚI TRÁI/PHẢI để DI CHUYỂN</div>
 <a href="index.html" class="btn-back">⬅ Về trang chủ</a>
 
 <script>
@@ -57,9 +51,9 @@ const targetScoreEl = document.getElementById("targetScore");
 const levelEl = document.getElementById("level");
 const hpEl = document.getElementById("hp");
 
-// Tự động tính toán khung hình phù hợp chiều cao nút bấm mới
+// Tận dụng 100% diện tích màn hình thiết bị
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 205;
+canvas.height = window.innerHeight;
 
 let score = 0;
 let level = 1;
@@ -69,12 +63,12 @@ let gameOver = false;
 let levelUpgraded = false; 
 
 const player = {
-    x: canvas.width / 2 - 20,
-    y: canvas.height - 50,
-    width: 40,
-    height: 40,
+    x: canvas.width / 2 - 22,
+    y: canvas.height - 90, // Đẩy xe tăng lên một chút để tránh ngón tay che
+    width: 44,
+    height: 44,
     color: "#00E676",
-    speed: 8 
+    speed: 7 
 };
 
 let bullets = [];        
@@ -83,43 +77,114 @@ let enemies = [];
 let items = [];          
 let particles = [];      
 
-let enemySpeed = 0.8;       
-let enemyBulletSpeed = 1.3; 
+let enemySpeed = 0.9;       
+let enemyBulletSpeed = 1.5; 
 let spawnTimer = 0;
 let moveLeft = false;
 let moveRight = false;
 
-// SỬ DỤNG SỰ KIỆN POINTER GIÚP PHÍM BẤM NHẠY VÀ CHÍNH XÁC TRÊN ĐIỆN THOẠI
-const btnLeft = document.getElementById("btnLeft");
-const btnRight = document.getElementById("btnRight");
+// Hệ thống màu sắc quân đội ngẫu nhiên cho phe địch
+const enemyColors = ["#ff1744", "#ff9100", "#d500f9", "#ff4081"];
 
-btnLeft.addEventListener("pointerdown", (e) => { e.preventDefault(); moveLeft = true; });
-btnLeft.addEventListener("pointerup", (e) => { e.preventDefault(); moveLeft = false; });
-btnLeft.addEventListener("pointerleave", (e) => { e.preventDefault(); moveLeft = false; });
+// XỬ LÝ CẢM ỨNG TOÀN MÀN HÌNH (HỖ TRỢ ĐA ĐIỂM HOÀN HẢO)
+window.addEventListener("pointerdown", handleTouchStart);
+window.addEventListener("pointermove", handleTouchMove);
+window.addEventListener("pointerup", handleTouchEnd);
+window.addEventListener("pointercancel", handleTouchEnd);
 
-btnRight.addEventListener("pointerdown", (e) => { e.preventDefault(); moveRight = true; });
-btnRight.addEventListener("pointerup", (e) => { e.preventDefault(); moveRight = false; });
-btnRight.addEventListener("pointerleave", (e) => { e.preventDefault(); moveRight = false; });
+const activeTouches = {};
 
-// Bắn đạn khi chạm vào vùng canvas trò chơi
-canvas.addEventListener("pointerdown", function(e) {
+function handleTouchStart(e) {
     e.preventDefault();
-    if (gameOver) { resetGame(); return; }
-    if (levelUpgraded) { nextLevel(); return; }
+    activeTouches[e.pointerId] = { x: e.clientX, y: e.clientY };
+    checkControls();
+    
+    // Nếu chạm vào nửa trên màn hình (Phục vụ bắn đạn)
+    if (e.clientY < canvas.height * 0.65) {
+        if (gameOver) { resetGame(); return; }
+        if (levelUpgraded) { nextLevel(); return; }
+        fireBullet();
+    }
+}
 
-    // Bắn 3 tia đạn xịn cùng lúc
-    bullets.push({ x: player.x + player.width/2 - 4, y: player.y, width: 8, height: 20, color: "#FFEA00", vx: 0, vy: -12 });
-    bullets.push({ x: player.x, y: player.y, width: 8, height: 20, color: "#FFEA00", vx: -1.5, vy: -11 });
-    bullets.push({ x: player.x + player.width - 8, y: player.y, width: 8, height: 20, color: "#FFEA00", vx: 1.5, vy: -11 });
-});
+function handleTouchMove(e) {
+    if (activeTouches[e.pointerId]) {
+        activeTouches[e.pointerId] = { x: e.clientX, y: e.clientY };
+        checkControls();
+    }
+}
+
+function handleTouchEnd(e) {
+    delete activeTouches[e.pointerId];
+    checkControls();
+}
+
+function checkControls() {
+    moveLeft = false;
+    moveRight = false;
+    
+    for (let id in activeTouches) {
+        let touch = activeTouches[id];
+        // Chỉ ghi nhận lệnh di chuyển nếu chạm vào nửa dưới màn hình
+        if (touch.y >= canvas.height * 0.65) {
+            if (touch.x < canvas.width / 2) {
+                moveLeft = true;
+            } else {
+                moveRight = true;
+            }
+        }
+    }
+}
+
+function fireBullet() {
+    bullets.push({ x: player.x + player.width/2 - 4, y: player.y - 10, width: 8, height: 22, color: "#FFEA00", vx: 0, vy: -13 });
+    bullets.push({ x: player.x + 4, y: player.y, width: 6, height: 18, color: "#FFEA00", vx: -1.8, vy: -12 });
+    bullets.push({ x: player.x + player.width - 10, y: player.y, width: 6, height: 18, color: "#FFEA00", vx: 1.8, vy: -12 });
+}
+
+// HÀM VẼ XE TĂNG ĐỒ HỌA CHI TIẾT (Thay cho hình ảnh tải chậm)
+function drawTank(x, y, width, height, baseColor, isEnemy = false) {
+    ctx.save();
+    
+    // Vẽ hai dải xích xe tăng (Hai bên hông)
+    ctx.fillStyle = "#2d2d30";
+    ctx.fillRect(x - 4, y + 4, 6, height - 8);
+    ctx.fillRect(x + width - 2, y + 4, 6, height - 8);
+    
+    // Thân xe chính (Khối thép tháp pháo)
+    ctx.fillStyle = baseColor;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = baseColor;
+    ctx.fillRect(x, y, width, height);
+    ctx.shadowBlur = 0; // Tắt đổ bóng cho các chi tiết nhỏ
+    
+    // Nắp hầm/Buồng lái tròn ở giữa xe
+    ctx.fillStyle = isEnemy ? "#1e1e24" : "#00703c";
+    ctx.beginPath();
+    ctx.arc(x + width/2, y + height/2, width/4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    
+    // Thiết kế nòng pháo (Địch hướng xuống, Ta hướng lên)
+    ctx.fillStyle = "#ffffff";
+    if (isEnemy) {
+        ctx.fillRect(x + width/2 - 4, y + height, 8, 14); // Nòng pháo địch hướng xuống
+    } else {
+        ctx.fillRect(x + width/2 - 4, y - 14, 8, 14); // Nòng pháo ta hướng lên trời
+    }
+    
+    ctx.restore();
+}
 
 function createExplosion(x, y, color = "#FF9100") {
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 15; i++) {
         particles.push({
             x: x, y: y,
-            vx: (Math.random() - 0.5) * 6,
-            vy: (Math.random() - 0.5) * 6,
-            radius: Math.random() * 3 + 2,
+            vx: (Math.random() - 0.5) * 7,
+            vy: (Math.random() - 0.5) * 7,
+            radius: Math.random() * 3.5 + 2,
             color: color,
             alpha: 1
         });
@@ -133,12 +198,11 @@ function updateHPDisplay() {
 }
 
 function resetGame() {
-    score = 0; level = 1; targetScore = 100; enemySpeed = 0.8; enemyBulletSpeed = 1.3;
+    score = 0; level = 1; targetScore = 100; enemySpeed = 0.9; enemyBulletSpeed = 1.5;
     scoreEl.innerText = score; targetScoreEl.innerText = targetScore; levelEl.innerText = level;
-    hp = 3;
-    updateHPDisplay();
+    hp = 3; updateHPDisplay();
     bullets = []; enemyBullets = []; enemies = []; items = []; particles = [];
-    player.x = canvas.width / 2 - 20;
+    player.x = canvas.width / 2 - 22;
     gameOver = false; levelUpgraded = false;
     update();
 }
@@ -147,8 +211,8 @@ function nextLevel() {
     level++;
     score = 0;
     targetScore = 100 + level * 50; 
-    enemySpeed += 0.2; 
-    enemyBulletSpeed += 0.2;
+    enemySpeed += 0.25; 
+    enemyBulletSpeed += 0.25;
     
     scoreEl.innerText = score; targetScoreEl.innerText = targetScore; levelEl.innerText = level;
     bullets = []; enemyBullets = []; enemies = []; items = []; particles = [];
@@ -158,30 +222,29 @@ function nextLevel() {
 
 function update() {
     if (gameOver) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.85)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "white"; ctx.font = "bold 26px Arial"; ctx.fillText("TRÒ CHƠI KẾT THÚC", canvas.width / 2 - 125, canvas.height / 2 - 10);
-        ctx.font = "16px Arial"; ctx.fillText("Chạm màn hình để chơi lại", canvas.width / 2 - 95, canvas.height / 2 + 30);
+        ctx.fillStyle = "rgba(5, 5, 15, 0.92)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white"; ctx.font = "bold 28px Arial"; ctx.fillText("TRÒ CHƠI KẾT THÚC", canvas.width / 2 - 135, canvas.height / 2 - 10);
+        ctx.font = "16px Arial"; ctx.fillStyle = "#888"; ctx.fillText("Chạm màn hình phía trên để tái đấu", canvas.width / 2 - 115, canvas.height / 2 + 35);
         return;
     }
 
     if (levelUpgraded) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.8)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#00E676"; ctx.font = "bold 28px Arial"; ctx.fillText("🎉 QUA MÀN " + level + "! 🎉", canvas.width / 2 - 100, canvas.height / 2 - 10);
-        ctx.fillStyle = "white"; ctx.font = "18px Arial"; ctx.fillText("Chạm màn hình để sang MÀN " + (level + 1), canvas.width / 2 - 120, canvas.height / 2 + 35);
+        ctx.fillStyle = "rgba(5, 5, 15, 0.9)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#00E676"; ctx.font = "bold 30px Arial"; ctx.fillText("🎉 QUA MÀN " + level + "! 🎉", canvas.width / 2 - 105, canvas.height / 2 - 10);
+        ctx.fillStyle = "white"; ctx.font = "18px Arial"; ctx.fillText("Chạm phía trên để tiến vào MÀN " + (level + 1), canvas.width / 2 - 135, canvas.height / 2 + 35);
         return;
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Di chuyển xe tăng mượt mà liên tục khi đang nhấn giữ phím
-    if (moveLeft && player.x > 0) player.x -= player.speed;
-    if (moveRight && player.x < canvas.width - player.width) player.x += player.speed;
+    // Di chuyển xe tăng mượt mà dựa trên trạng thái chạm giữ
+    if (moveLeft && player.x > 10) player.x -= player.speed;
+    if (moveRight && player.x < canvas.width - player.width - 10) player.x += player.speed;
 
-    // Vẽ xe tăng của bạn
-    ctx.fillStyle = player.color; ctx.fillRect(player.x, player.y, player.width, player.height);
-    ctx.fillStyle = "#FFF"; ctx.fillRect(player.x + player.width/2 - 4, player.y - 12, 8, 12);
+    // Gọi hàm vẽ xe tăng của phe mình
+    drawTank(player.x, player.y, player.width, player.height, player.color, false);
 
-    // Đạn của bạn bay (Vòng lặp ngược để tránh lỗi xóa phần tử)
+    // Đạn của bạn bay
     for (let bIndex = bullets.length - 1; bIndex >= 0; bIndex--) {
         let b = bullets[bIndex];
         b.x += b.vx; b.y += b.vy;
@@ -197,7 +260,7 @@ function update() {
         eb.y += eb.speed;
         ctx.fillStyle = eb.color; ctx.fillRect(eb.x, eb.y, eb.width, eb.height);
 
-        // Đạn địch trúng người chơi
+        // Va chạm đạn địch vào xe mình
         if (eb.x < player.x + player.width && eb.x + eb.width > player.x && eb.y < player.y + player.height && eb.y + eb.height > player.y) {
             enemyBullets.splice(ebIndex, 1);
             hp--; updateHPDisplay();
@@ -205,44 +268,20 @@ function update() {
             if (hp <= 0) gameOver = true;
             continue;
         }
-        if (eb.y > canvas.height) {
-            enemyBullets.splice(ebIndex, 1);
-        }
+        if (eb.y > canvas.height) enemyBullets.splice(ebIndex, 1);
     }
 
-    // Quân địch xuất hiện thưa thớt dễ chịu
+    // Quân địch xuất hiện ngẫu nhiên
     spawnTimer++;
-    if (spawnTimer % Math.max(60, 120 - level * 5) === 0) {
-        enemies.push({ x: Math.random() * (canvas.width - 35), y: -35, width: 35, height: 35, color: "#FF1744" });
+    if (spawnTimer % Math.max(50, 110 - level * 6) === 0) {
+        let randomColor = enemyColors[Math.floor(Math.random() * enemyColors.length)];
+        enemies.push({ 
+            x: Math.random() * (canvas.width - 50) + 5, 
+            y: -45, 
+            width: 40, 
+            height: 40, 
+            color: randomColor 
+        });
     }
 
-    // Hộp cứu thương rơi
-    if (spawnTimer % 250 === 0 && hp < 5) {
-        items.push({ x: Math.random() * (canvas.width - 25), y: -25, size: 25 });
-    }
-
-    // Xử lý vật phẩm hồi máu
-    for (let iIndex = items.length - 1; iIndex >= 0; iIndex--) {
-        let item = items[iIndex];
-        item.y += 1.5;
-        ctx.fillStyle = "#FFF"; ctx.fillRect(item.x, item.y, item.size, item.size);
-        ctx.fillStyle = "#FF1744";
-        ctx.fillRect(item.x + item.size/2 - 2, item.y + 4, 4, item.size - 8);
-        ctx.fillRect(item.x + 4, item.y + item.size/2 - 2, item.size - 8, 4);
-
-        if (item.x < player.x + player.width && item.x + item.size > player.x && item.y < player.y + player.height && item.y + item.size > player.y) {
-            items.splice(iIndex, 1);
-            if (hp < 5) { hp++; updateHPDisplay(); }
-            continue;
-        }
-        if (item.y > canvas.height) items.splice(iIndex, 1);
-    }
-
-    // QUẢN LÝ XE TĂNG ĐỊCH VÀ XỬ LÝ VA CHẠM ĐẠN (Đoạn mã được hoàn thiện ở đây)
-    for (let eIndex = enemies.length - 1; eIndex >= 0; eIndex--) {
-        let enemy = enemies[eIndex];
-        enemy.y += enemySpeed;
-        ctx.fillStyle = enemy.color; ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-
-        // Địch ngẫu nhiên bắn đạn xuống
     
