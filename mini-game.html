@@ -5,44 +5,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Siêu Chiến Dịch Xe Tăng - Sửa Lỗi Hiển Thị</title>
 <style>
+    /* Ép toàn bộ trang web vào khung cố định, chống tràn và mất hình */
     html, body {
-        margin: 0; padding: 0; background-color: #080810; color: white;
+        margin: 0; padding: 0; background-color: #0b0c16; color: white;
         font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; text-align: center; user-select: none;
-        touch-action: none; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;
+        touch-action: none; width: 100%; height: 100%;
+        display: flex; justify-content: center; align-items: center;
     }
-    .minigame-container {
-        position: relative; width: 100vw; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center;
+    .game-wrapper {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        max-width: 480px; /* Giới hạn chiều rộng chuẩn điện thoại */
+        background-color: #0b0c16;
+        overflow: hidden;
     }
     .info-bar { 
         position: absolute; top: 0; left: 0; width: 100%;
-        padding: 12px 0; font-size: 15px; font-weight: bold; 
-        background: linear-gradient(to bottom, rgba(0,0,0,0.95), rgba(0,0,0,0)); 
+        padding: 15px 0; font-size: 15px; font-weight: bold; 
+        background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0)); 
         z-index: 10; display: flex; justify-content: space-around; box-sizing: border-box;
     }
-    #gameCanvas { background-color: #0b0c16; display: block; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-    
+    /* Ép Canvas luôn chiếm trọn khung hình hiển thị của điện thoại */
+    #gameCanvas { 
+        display: block; 
+        width: 100%; 
+        height: 100%; 
+        background-color: #0d0e22;
+    }
     .guide-overlay {
-        position: absolute; bottom: 75px; left: 0; width: 100%;
-        font-size: 11px; color: rgba(255,255,255,0.4); z-index: 9; pointer-events: none;
-        letter-spacing: 0.5px; line-height: 1.5; text-shadow: 1px 1px 2px #000;
+        position: absolute; bottom: 85px; left: 0; width: 100%;
+        font-size: 12px; color: rgba(255,255,255,0.4); z-index: 9; pointer-events: none;
+        letter-spacing: 0.5px; line-height: 1.5; text-shadow: 1px 1px 3px #000;
     }
     .btn-back {
-        position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+        position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
         padding: 10px 24px; background-color: #ff5722; color: white;
         text-decoration: none; border-radius: 20px; font-size: 14px; font-weight: bold; z-index: 10;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
 </style>
 </head>
 <body>
 
-<div class="minigame-container">
+<div class="game-wrapper">
     <div class="info-bar">
         <div>Màn: <span id="level" style="color: #00e676;">1</span></div>
         <div>Điểm: <span id="score" style="color: #ffea00;">0</span>/<span id="targetScore">100</span></div>
         <div>Mạng: <span id="hp">❤️❤️❤️❤️❤️</span></div>
     </div>
 
+    <!-- Canvas được bao bọc an toàn bên trong lớp CSS -->
     <canvas id="gameCanvas"></canvas>
 
     <div class="guide-overlay">
@@ -60,21 +73,19 @@ const targetScoreEl = document.getElementById("targetScore");
 const levelEl = document.getElementById("level");
 const hpEl = document.getElementById("hp");
 
-// ĐỊNH NGHĨA KHUNG HÌNH ẢO (VIRTUAL RESOLUTION) CỐ ĐỊNH CHỐNG TRÀN MÀN HÌNH
-const V_WIDTH = 400;
-const V_HEIGHT = 700;
-let scale = 1;
-
-function resizeCanvas() {
-    // Tính toán tỷ lệ co giãn tối ưu để game luôn nằm trong màn hình thiết bị
-    scale = Math.min(window.innerWidth / V_WIDTH, window.innerHeight / V_HEIGHT);
-    canvas.width = V_WIDTH * scale;
-    canvas.height = V_HEIGHT * scale;
+// Tự động đồng bộ kích thước Canvas chuẩn theo pixel thực tế của màn hình
+function initCanvasSize() {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+initCanvasSize();
+// Đảm bảo xoay màn hình hay thay đổi kích thước đều không bị mất hình
+window.addEventListener('resize', () => {
+    initCanvasSize();
+    player.y = canvas.height - 150; // Cập nhật lại vị trí xe tăng của bạn
+});
 
-// HỆ THỐNG ÂM THANH AN TOÀN
+// HỆ THỐNG ÂM THANH KHÔNG LỖI
 let audioCtx = null;
 let musicInterval = null;
 
@@ -87,14 +98,14 @@ function playSound(type) {
 
         if (type === 'shoot') {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(380, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(70, audioCtx.currentTime + 0.1);
             gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
             osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         } else if (type === 'explosion') {
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(90, audioCtx.currentTime);
             osc.frequency.linearRampToValueAtTime(10, audioCtx.currentTime + 0.2);
             gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
@@ -122,29 +133,29 @@ function startBackgroundMusic() {
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(note, audioCtx.currentTime);
             osc.connect(gain); gain.connect(audioCtx.destination);
-            gain.gain.setValueAtTime(0.012, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
             osc.start(); osc.stop(audioCtx.currentTime + 0.25);
         } catch(e) {}
     }, 380);
 }
 
-// KHỞI TẠO BIẾN DỰA TRÊN TỌA ĐỘ ẢO BIỂU DIỄN
+// KHỞI TẠO BIẾN TRÒ CHƠI DỰA TRÊN KÍCH THƯỚC MAN HÌNH THỰC
 let score = 0; let level = 1; let targetScore = 100; let hp = 5; 
 let gameOver = false; let levelUpgraded = false;
 
 const player = {
-    x: V_WIDTH / 2 - 15, 
-    y: V_HEIGHT - 130, // Vị trí an toàn tuyệt đối luôn hiển thị trên màn hình
-    width: 30, height: 30, color: "#00E676", speed: 5.5,
+    x: canvas.width / 2 - 14, 
+    y: canvas.height - 150, // Vị trí an toàn tuyệt đối, không bị che khuất
+    width: 28, height: 28, color: "#00E676", speed: 5.5,
     weaponLevel: 1, powerupTimer: 0, maxPowerupTime: 420
 };
 
 let bullets = []; let enemyBullets = []; let enemies = []; let items = []; let particles = [];      
-let enemyBaseSpeed = 0.6; let enemyBulletSpeed = 1.1; let spawnTimer = 0;
+let enemyBaseSpeed = 0.55; let enemyBulletSpeed = 1.1; let spawnTimer = 0;
 let moveLeft = false; let moveRight = false; const activeTouches = {};
 
-// SỰ KIỆN CẢM ỨNG ĐƯỢC CHUYỂN ĐỔI TỶ LỆ THEO KHUNG CHUẨN
+// XỬ LÝ ĐIỀU KHIỂN CẢM ỨNG CHUẨN
 window.addEventListener("pointerdown", (e) => {
     e.preventDefault();
     
@@ -155,19 +166,21 @@ window.addEventListener("pointerdown", (e) => {
         } catch(err) {}
     }
 
-    // Quy đổi tọa độ click thực tế sang tọa độ ảo trong game
     let rect = canvas.getBoundingClientRect();
-    let touchX = (e.clientX - rect.left) / scale;
-    let touchY = (e.clientY - rect.top) / scale;
+    let touchX = e.clientX - rect.left;
+    let touchY = e.clientY - rect.top;
 
-    activeTouches[e.pointerId] = { x: touchX, y: touchY };
-    checkControls();
-    
-    // Sử dụng tỷ lệ tọa độ ảo 65% chiều cao khung chơi để chia vùng bắn
-    if (touchY < V_HEIGHT * 0.65 && touchY >= 0 && touchX >= 0 && touchX <= V_WIDTH) {
-        if (gameOver) { resetGame(); return; }
-        if (levelUpgraded) { nextLevel(); return; }
-        fireBullet();
+    // Chỉ ghi nhận cảm ứng nếu nằm trong phạm vi vùng chơi của Canvas
+    if (touchX >= 0 && touchX <= canvas.width && touchY >= 0 && touchY <= canvas.height) {
+        activeTouches[e.pointerId] = { x: touchX, y: touchY };
+        checkControls();
+        
+        // Chạm nửa trên màn hình để bắn đạn công kích
+        if (touchY < canvas.height * 0.65) {
+            if (gameOver) { resetGame(); return; }
+            if (levelUpgraded) { nextLevel(); return; }
+            fireBullet();
+        }
     }
 });
 
@@ -176,8 +189,8 @@ window.addEventListener("pointermove", (e) => {
     if (activeTouches[e.pointerId]) {
         let rect = canvas.getBoundingClientRect();
         activeTouches[e.pointerId] = { 
-            x: (e.clientX - rect.left) / scale, 
-            y: (e.clientY - rect.top) / scale 
+            x: e.clientX - rect.left, 
+            y: e.clientY - rect.top 
         };
         checkControls();
     }
@@ -195,8 +208,8 @@ function checkControls() {
     moveLeft = false; moveRight = false;
     for (let id in activeTouches) {
         let touch = activeTouches[id];
-        if (touch.y >= V_HEIGHT * 0.65) {
-            if (touch.x < V_WIDTH / 2) moveLeft = true;
+        if (touch.y >= canvas.height * 0.65) {
+            if (touch.x < canvas.width / 2) moveLeft = true;
             else moveRight = true;
         }
     }
@@ -228,11 +241,4 @@ function drawTank(x, y, width, height, baseColor, isEnemy = false, type = 'norma
     ctx.fillStyle = baseColor; ctx.fillRect(x, y, width, height);
     if (type === 'heavy') { ctx.fillStyle = "#333"; ctx.fillRect(x + 4, y + 3, width - 8, 3); }
     ctx.fillStyle = isEnemy ? "#111116" : "#005028";
-    ctx.beginPath(); ctx.arc(x + width/2, y + height/2, width/3.8, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#ffffff";
-    if (isEnemy) ctx.fillRect(x + width/2 - 2.5, y + height, 5, 9);
-    else ctx.fillRect(x + width/2 - 2.5, y - 9, 5, 9);
-    ctx.restore();
-}
-
     
