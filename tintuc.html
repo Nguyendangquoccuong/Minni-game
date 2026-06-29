@@ -2,61 +2,61 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tin tức</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>📰 Tin tức mới</h1>
+<h1 style="color: #fff; text-align: center; padding-top: 20px;">📰 Tin tức mới</h1>
 
-<div id="news">Đang tải...</div>
+<!-- Khung chứa tin tức được định dạng lại để nổi bật trên nền xanh -->
+<div id="news" style="max-width: 600px; margin: 20px auto; padding: 15px; background: rgba(255,255,255,0.9); border-radius: 10px; color: #333;">
+    Đang tải tin tức...
+</div>
 
-<p><a href="index.html">⬅ Về trang chủ</a></p>
+<p style="text-align: center;"><a href="index.html" style="color: #fff; font-weight: bold; text-decoration: none;">⬅ Về trang chủ</a></p>
 
 <script>
-const RSS = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://vnexpress.net/rss/tin-moi-nhat.rss");
+// Sử dụng API rss2json giúp chuyển đổi trực tiếp dữ liệu RSS của VnExpress sang JSON siêu nhanh và không bị lỗi CORS
+const API_URL = "https://rss2json.com" + encodeURIComponent("https://vnexpress.net");
 
-fetch(RSS)
-.then(r => {
-    if (!r.ok) throw new Error("Mạng lỗi");
-    return r.text();
+fetch(API_URL)
+.then(response => {
+    if (!response.ok) throw new Error("Không thể kết nối API");
+    return response.json();
 })
-.then(str => new window.DOMParser().parseFromString(str, "text/xml"))
 .then(data => {
-    const items = data.querySelectorAll("item");
-    const news = document.getElementById("news");
-
-    if (items.length === 0) {
-        news.innerHTML = "Không tìm thấy bài viết nào.";
+    const newsContainer = document.getElementById("news");
+    
+    if (data.status !== "ok" || !data.items || data.items.length === 0) {
+        newsContainer.innerHTML = "Không tìm thấy bài viết nào.";
         return;
     }
 
-    news.innerHTML = "";
+    newsContainer.innerHTML = ""; // Xóa dòng chữ đang tải
 
-    items.forEach((item, index) => {
+    // Lấy tối đa 10 bài viết mới nhất
+    data.items.forEach((item, index) => {
         if (index >= 10) return;
 
-        const title = item.querySelector("title") ? item.querySelector("title").textContent : "Không có tiêu đề";
-        const link = item.querySelector("link") ? item.querySelector("link").textContent : "#";
+        const title = item.title;
+        const link = item.link;
         
-        let desc = "Không có mô tả";
-        if (item.querySelector("description")) {
-            desc = item.querySelector("description").textContent
-                .replace(/<[^>]+>/g, "")
-                .substring(0, 150);
-        }
+        // Loại bỏ thẻ HTML thừa nếu có trong phần mô tả
+        let desc = item.description.replace(/<[^>]+>/g, "").substring(0, 150);
 
-        news.innerHTML += `
-        <div style="margin-bottom:20px; border-bottom:1px solid #ccc; padding-bottom:10px;">
-            <h3 style="color:#000;">${title}</h3>
-            <p style="color:#333;">${desc}...</p>
-            <a href="${link}" target="_blank" style="color:#007bff; font-weight:bold;">Đọc tiếp</a>
+        newsContainer.innerHTML += `
+        <div style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
+            <h3 style="margin-top: 0; color: #0056b3; font-size: 1.2rem;">${title}</h3>
+            <p style="font-size: 0.95rem; line-height: 1.4; color: #444;">${desc}...</p>
+            <a href="${link}" target="_blank" style="color: #ff5722; font-weight: bold; text-decoration: none;">Đọc tiếp ➔</a>
         </div>`;
     });
 })
 .catch(err => {
     console.error(err);
-    document.getElementById("news").innerHTML = "Không tải được tin tức. Vui lòng thử lại sau.";
+    document.getElementById("news").innerHTML = "Không tải được tin tức do lỗi mạng. Vui lòng thử lại sau.";
 });
 </script>
 
