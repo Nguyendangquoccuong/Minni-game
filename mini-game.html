@@ -9,85 +9,88 @@
         margin: 0; padding: 20px 10px 40px 10px; background-color: #0b0c16; color: white;
         font-family: Arial, sans-serif; text-align: center; box-sizing: border-box;
     }
-    h1 { margin-top: 40px; color: #00e676; font-size: 24px; text-shadow: 0 0 10px rgba(0, 230, 118, 0.3); }
-    p { color: #888; font-size: 14px; margin-bottom: 30px; }
+    h1 { margin-top: 30px; color: #00e676; font-size: 24px; text-shadow: 0 0 10px rgba(0, 230, 118, 0.3); }
+    p { color: #888; font-size: 14px; margin-bottom: 25px; }
     
-    .section-title {
-        color: #aaa; font-size: 14px; text-align: left; max-width: 340px; margin: 20px auto 10px auto;
-        font-weight: bold; border-left: 3px solid #00e676; padding-left: 8px;
-    }
-
     .menu-container {
-        display: flex; flex-direction: column; align-items: center; gap: 15px;
+        display: flex; flex-direction: column; align-items: center; gap: 12px;
     }
     
+    /* Giao diện hàng ngang tối giản */
     .btn-select {
-        width: 100%; max-width: 340px; padding: 15px; 
-        background-color: #161730; border: 2px solid #333;
-        border-radius: 15px; text-decoration: none; color: white; 
-        display: block; box-sizing: border-box;
-        overflow: hidden;
+        width: 100%; max-width: 340px; padding: 10px; 
+        background-color: #161730; border: 1px solid #2f3b4c;
+        border-radius: 12px; text-decoration: none; color: white; 
+        display: flex; align-items: center; text-align: left; box-sizing: border-box;
         transition: all 0.2s ease;
     }
     
     .btn-select:hover, .btn-select:active {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(255,255,255,0.1);
+        background-color: #1f2244;
+        transform: scale(1.02);
     }
     
+    /* Ảnh thu nhỏ dạng vuông nằm bên trái */
     .game-thumb {
-        width: 100%; height: 110px; object-fit: cover;
-        border-radius: 10px; margin-bottom: 10px;
+        width: 55px; height: 55px; object-fit: cover;
+        border-radius: 8px; margin-right: 12px; flex-shrink: 0;
         border: 1px solid rgba(255,255,255,0.1); background-color: #0b0c16;
     }
     
-    .btn-select h2 { margin: 0 0 4px 0; font-size: 16px; }
-    .btn-select span { font-size: 12px; color: #aaa; }
+    .game-info { flex-grow: 1; }
+    .game-info h2 { margin: 0 0 3px 0; font-size: 15px; font-weight: bold; }
+    .game-info span { font-size: 11px; color: #aaa; display: block; line-height: 1.3; }
     
-    /* Màu sắc viền cho các game đã kích hoạt */
-    .g-tetris { border-color: #00e676; } .g-tetris h2 { color: #00e676; }
-    .g-snake { border-color: #ff9100; } .g-snake h2 { color: #ff9100; }
-    .g-bird { border-color: #29b6f6; } .g-bird h2 { color: #29b6f6; }
-    .g-caro { border-color: #ec407a; } .g-caro h2 { color: #ec407a; }
+    /* Màu chữ tiêu đề riêng biệt để tạo điểm nhấn gọn gàng */
+    .t1 { color: #00e676; }
+    .t2 { color: #ff9100; }
+    .t3 { color: #29b6f6; }
+    .t4 { color: #ec407a; }
 
-    /* Nút về trang chủ */
-    .btn-back { display: inline-block; margin-top: 30px; padding: 10px 20px; background-color: #222; color: #66fcf1; border: 1px solid #66fcf1; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 14px; }
+    .btn-back { display: inline-block; margin-top: 30px; padding: 10px 20px; background-color: #222; color: #66fcf1; border: 1px solid #66fcf1; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 13px; }
 </style>
 </head>
 <body>
 
     <h1>🎮 TRUNG TÂM GAME 🎮</h1>
-    <p>Chạm vào trò chơi bên dưới để bắt đầu chơi ngay</p>
+    <p>Chọn trò chơi để bắt đầu ngay</p>
 
-    <div class="section-title">TRÒ CHƠI SẴN SÀNG (4 GAME)</div>
     <div class="menu-container">
         
         <!-- Game 1: Xếp gạch -->
-        <a href="xepgach.html" class="btn-select g-tetris">
+        <a href="xepgach.html" class="btn-select">
             <img src="background.png" alt="Game Xếp Gạch" class="game-thumb">
-            <h2>🧱 GAME XẾP GẠCH CỔ ĐIỂN</h2>
-            <span>Trò chơi xếp hình khối huyền thoại có âm thanh sống động</span>
+            <div class="game-info">
+                <h2 class="t1">🧱 XẾP GẠCH CỔ ĐIỂN</h2>
+                <span>Xếp khối huyền thoại, có âm thanh sống động</span>
+            </div>
         </a>
 
         <!-- Game 2: Rắn săn mồi -->
-        <a href="ransanmoi.html" class="btn-select g-snake">
+        <a href="ransanmoi.html" class="btn-select">
             <img src="background.png" alt="Rắn Săn Mồi" class="game-thumb">
-            <h2>🐍 RẮN SĂN MỒI KHÔNG GIAN</h2>
-            <span>Điều khiển chú rắn ăn mồi chấm đỏ và phá kỷ lục điểm số</span>
+            <div class="game-info">
+                <h2 class="t2">🐍 RẮN SĂN MỒI</h2>
+                <span>Điều khiển rắn ăn mồi chấm đỏ, phá kỷ lục điểm</span>
+            </div>
         </a>
 
         <!-- Game 3: Flappy Bird -->
-        <a href="flappybird.html" class="btn-select g-bird">
+        <a href="flappybird.html" class="btn-select">
             <img src="background.png" alt="Flappy Bird" class="game-thumb">
-            <h2>🐦 CHÚ CHIM VỖ CÁNH</h2>
-            <span>Căn thật chuẩn để đưa chú chim vượt qua các ống khói xanh</span>
+            <div class="game-info">
+                <h2 class="t3">🐦 CHÚ CHIM VỖ CÁNH</h2>
+                <span>Căn thật chuẩn đưa chim vượt qua ống khói xanh</span>
+            </div>
         </a>
 
         <!-- Game 4: Cờ Caro -->
-        <a href="caro.html" class="btn-select g-caro">
+        <a href="caro.html" class="btn-select">
             <img src="background.png" alt="Cờ Caro" class="game-thumb">
-            <h2>❌ CỜ CA-RÔ ĐẤU TRÍ O-X</h2>
-            <span>Trò chơi giải trí đấu trí 2 người trên cùng màn hình</span>
+            <div class="game-info">
+                <h2 class="t4">❌ CỜ CA-RÔ ĐẤU TRÍ</h2>
+                <span>Giải trí đấu trí 2 người trên cùng màn hình</span>
+            </div>
         </a>
 
     </div>
@@ -96,5 +99,4 @@
     <a href="index.html" class="btn-back">🏠 Về Trang Chủ Chính</a>
 
 </body>
-                </html>
-                
+</html>
