@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cờ Caro Kinh Điển</title>
+    <style>
+        body { margin: 0; background-color: #0b0c16; color: white; font-family: Arial, sans-serif; text-align: center; }
+        .status { font-size: 20px; color: #ec407a; margin: 20px; font-weight: bold; }
+        .board { display: grid; grid-template-columns: repeat(3, 90px); gap: 5px; justify-content: center; margin: 20px auto; }
+        .cell { width: 90px; height: 90px; background-color: #161730; border: 2px solid #ec407a; border-radius: 10px; font-size: 36px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .btn-back { display: inline-block; padding: 10px 20px; background-color: #333; color: white; text-decoration: none; border-radius: 20px; }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">Lượt chơi: X</div>
+    <div class="board" id="board"></div>
+    <a href="mini-game.html" class="btn-back">⬅ Quay lại danh sách</a>
 
+    <script>
+        const boardElement = document.getElementById("board");
+        const statusElement = document.getElementById("status");
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+
+        function checkWin() {
+            const winPatterns = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+            return winPatterns.some(pattern => pattern.every(index => board[index] === currentPlayer));
+        }
+
+        function makeMove(index, cell) {
+            if (board[index] !== "" || statusElement.innerText.includes("Thắng")) return;
+            board[index] = currentPlayer;
+            cell.innerText = currentPlayer;
+            cell.style.color = currentPlayer === "X" ? "#29b6f6" : "#ff1744";
+            
+            if (checkWin()) {
+                statusElement.innerText = `Người chơi ${currentPlayer} CHIẾN THẮNG! 🎉`;
+                return;
+            }
+            if (!board.includes("")) { statusElement.innerText = "Trận đấu HÒA! 🤝"; return; }
+            
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            statusElement.innerText = `Lượt chơi: ${currentPlayer}`;
+        }
+
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.addEventListener("click", () => makeMove(i, cell));
+            boardElement.appendChild(cell);
+        }
+    </script>
+</body>
+</html>
