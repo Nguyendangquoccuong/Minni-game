@@ -57,7 +57,7 @@
         border-radius: 20px; 
         overflow: hidden; 
         box-shadow: 0 12px 30px rgba(0,0,0,0.6); 
-        padding: 30px 20px; 
+        padding: 40px 20px; 
         text-align: center;
         margin-bottom: 40px;
     }
@@ -66,10 +66,6 @@
         text-shadow: 0 0 10px rgba(69, 243, 255, 0.3);
     }
     .banner-card p { font-size: 15px; color: #c5a880; margin: 0 0 25px 0; line-height: 1.5; }
-    .banner-card img {
-        width: 100%; height: auto; border-radius: 12px; max-width: 650px; 
-        display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
     
     /* Khu vực nút bấm chuyển hướng nhanh */
     .cta-group { margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
@@ -98,15 +94,6 @@
         box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         border: 1px solid #2f3b4c;
     }
-    .funny-story img {
-        width: 100%;
-        height: auto;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        margin-bottom: 15px;
-        transition: transform 0.3s ease;
-    }
-    .funny-story img:hover { transform: scale(1.02); }
 </style>
 </head>
 <body>
@@ -122,13 +109,10 @@
 
     <div class="container">
         
-        <!-- KHUNG BANNER ĐÃ ĐƯỢC THIẾT KẾ LẠI ĐẸP MẮT -->
+        <!-- KHUNG BANNER KHÔNG CHỨA ẢNH -->
         <div class="banner-card">
             <h1>CHÀO MỪNG ĐẾN VỚI MINNI WORLD</h1>
             <p>Khám phá thế giới giải trí, tin tức việc làm & công cụ tiện ích miễn phí</p>
-            
-            <!-- ĐÃ SỬA: Link ảnh Banner công nghệ siêu nét -->
-            <img src="https://unsplash.com" alt="Minni World Banner">
             
             <!-- THÊM MỚI: Các nút bấm chuyển hướng nhanh bắt mắt -->
             <div class="cta-group">
@@ -142,16 +126,14 @@
             <p>Chào mừng bạn đã ghé thăm website chính thức của chúng tôi. <br>Hãy bấm vào các danh mục trên thanh menu để trải nghiệm dịch vụ.</p>
         </div>
 
-        <!-- KHU VỰC TRUYỆN VUI NẰM TRONG CARD RIÊNG BIỆT -->
+        <!-- KHU VỰC TRUYỆN VUI KHÔNG CHỨA ẢNH -->
         <div class="funny-story">
             <p style="color: #ffaa00; font-weight: bold; margin-top: 0; margin-bottom: 20px; font-size: 19px;">Góc giải trí: Con gà khôn hơn cáo 🐔🦊</p>
-            <!-- ĐÃ SỬA: Link ảnh minh họa truyện vui hoạt hình dễ thương -->
-            <img src="https://unsplash.com" alt="Truyện vui Con gà khôn hơn cáo">
-            <p style="font-size: 14px; color: #aaa; margin: 10px 0 0 0; font-style: italic;">Nhấn vào mục tin tức để xem chi tiết câu chuyện...</p>
+            <p style="font-size: 15px; color: #eee; line-height: 1.6; margin-bottom: 20px;">Một ngày nọ, con Cáo đói bụng thấy chú Gà trống đang đậu trên cành cây cao. Cáo bèn tiến lại gần và dùng những lời ngon ngọt để dụ Gà xuống đất...</p>
+            <p style="font-size: 14px; color: #66fcf1; margin: 10px 0 0 0; font-style: italic;">Nhấn vào mục tin tức để xem tiếp...</p>
         </div>
 
     </div>
     
 </body>
-    </html>
-                
+</html>
