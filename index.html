@@ -9,45 +9,104 @@
         margin: 0; padding: 0; background-color: #0b0c10; color: #eee;
         font-family: 'Segoe UI', Arial, sans-serif;
     }
-    /* Thanh menu màu xanh của bạn */
+    
+    /* Thanh menu tối ưu hiển thị di động */
     nav {
         background-color: #1f2833;
-        padding: 18px;
+        padding: 15px 10px;
         text-align: center;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
     }
     nav a {
         color: #66fcf1;
         text-decoration: none;
-        margin: 0 15px; 
+        margin: 0 12px; 
         font-weight: bold;
-        font-size: 17px;
-        transition: 0.3s;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        padding: 5px 0;
     }
     nav a:hover {
         color: #45f3ff;
+        transform: translateY(-2px);
     }
-    /* Làm nổi bật nút Bán Hàng */
+    /* Hiệu ứng nhấp nháy nhẹ thu hút cho nút Bán Hàng */
     nav a.shop-btn {
         color: #ffeb3b;
+        border: 1px dashed #ffeb3b;
+        padding: 4px 10px;
+        border-radius: 5px;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
     }
     
-    .container { max-width: 1300px; margin: 30px auto; padding: 0 20px; box-sizing: border-box; text-align: center; }
-    .welcome-text { margin: 50px 0; font-size: 18px; color: #8892b0; line-height: 1.8; }
+    .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; box-sizing: border-box; text-align: center; }
     
-    /* Cấu hình khu vực truyện vui */
+    /* Khung Banner cao cấp có nút hành động */
+    .banner-card {
+        background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%);
+        border: 1px solid #2f3b4c;
+        border-radius: 20px; 
+        overflow: hidden; 
+        box-shadow: 0 12px 30px rgba(0,0,0,0.6); 
+        padding: 30px 20px; 
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .banner-card h1 {
+        font-size: 28px; margin: 0 0 12px 0; color: #45f3ff; letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(69, 243, 255, 0.3);
+    }
+    .banner-card p { font-size: 15px; color: #c5a880; margin: 0 0 25px 0; line-height: 1.5; }
+    .banner-card img {
+        width: 100%; height: auto; border-radius: 12px; max-width: 650px; 
+        display: inline-block; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    /* Khu vực nút bấm chuyển hướng nhanh */
+    .cta-group { margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+    .btn {
+        padding: 10px 24px; font-weight: bold; border-radius: 30px; text-decoration: none;
+        transition: all 0.3s ease; font-size: 15px;
+    }
+    .btn-primary { background-color: #45f3ff; color: #0b0c10; box-shadow: 0 4px 15px rgba(69,243,255,0.4); }
+    .btn-primary:hover { background-color: #66fcf1; transform: scale(1.05); }
+    .btn-secondary { background-color: transparent; color: #66fcf1; border: 2px solid #66fcf1; }
+    .btn-secondary:hover { background-color: rgba(102,252,241,0.1); transform: scale(1.05); }
+
+    .welcome-text { 
+        margin: 40px 0; font-size: 17px; color: #8892b0; line-height: 1.8; 
+        background: rgba(31, 40, 51, 0.3); padding: 15px; border-radius: 10px;
+    }
+    
+    /* Khung đọc truyện vui thiết kế sang trọng */
     .funny-story {
         text-align: center;
-        margin-top: 40px;
-        padding-bottom: 40px;
+        margin: 40px auto;
+        padding: 25px;
+        max-width: 500px;
+        background-color: #1f2833;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        border: 1px solid #2f3b4c;
     }
     .funny-story img {
         width: 100%;
-        max-width: 400px;
         height: auto;
         border-radius: 10px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        margin-bottom: 15px;
+        transition: transform 0.3s ease;
     }
+    .funny-story img:hover { transform: scale(1.02); }
 </style>
 </head>
 <body>
@@ -63,30 +122,36 @@
 
     <div class="container">
         
-        <!-- KHUNG ẢNH BANNER TRANG CHỦ TỰ CO GIÃN - ĐÃ FIX LINK ẢNH SIÊU NÉT -->
-        <div style="width: 100%; max-width: 1200px; margin: 20px auto; padding: 0 10px; box-sizing: border-box;">
-            <div style="background: #1f2833; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.5); padding: 20px; text-align: center;">
-                <h1 style="font-size: 24px; margin: 0 0 10px 0; color: #45f3ff; letter-spacing: 1px;">CHÀO MỪNG ĐẾN VỚI MINNI WORLD</h1>
-                <p style="font-size: 14px; color: #ccc; margin: 0 0 20px 0; line-height: 1.4;">Khám phá thế giới giải trí, tin tức việc làm & công cụ tiện ích miễn phí</p>
-                <!-- ĐÃ SỬA: Link ảnh Banner công nghệ siêu nét -->
-                <img src="https://unsplash.com" alt="Minni World Banner" style="width: 100%; height: auto; border-radius: 8px; max-width: 600px; display: inline-block;">
+        <!-- KHUNG BANNER ĐÃ ĐƯỢC THIẾT KẾ LẠI ĐẸP MẮT -->
+        <div class="banner-card">
+            <h1>CHÀO MỪNG ĐẾN VỚI MINNI WORLD</h1>
+            <p>Khám phá thế giới giải trí, tin tức việc làm & công cụ tiện ích miễn phí</p>
+            
+            <!-- ĐÃ SỬA: Link ảnh Banner công nghệ siêu nét -->
+            <img src="https://unsplash.com" alt="Minni World Banner">
+            
+            <!-- THÊM MỚI: Các nút bấm chuyển hướng nhanh bắt mắt -->
+            <div class="cta-group">
+                <a href="#" class="btn btn-primary">Chơi Game Ngay 🎮</a>
+                <a href="banhang.html" class="btn btn-secondary">Ghé Cửa Hàng 🛍️</a>
             </div>
         </div>
         
-
         <!-- Lời chào trang chủ to rõ hơn -->
         <div class="welcome-text">
             <p>Chào mừng bạn đã ghé thăm website chính thức của chúng tôi. <br>Hãy bấm vào các danh mục trên thanh menu để trải nghiệm dịch vụ.</p>
         </div>
 
-    </div>
+        <!-- KHU VỰC TRUYỆN VUI NẰM TRONG CARD RIÊNG BIỆT -->
+        <div class="funny-story">
+            <p style="color: #ffaa00; font-weight: bold; margin-top: 0; margin-bottom: 20px; font-size: 19px;">Góc giải trí: Con gà khôn hơn cáo 🐔🦊</p>
+            <!-- ĐÃ SỬA: Link ảnh minh họa truyện vui hoạt hình dễ thương -->
+            <img src="https://unsplash.com" alt="Truyện vui Con gà khôn hơn cáo">
+            <p style="font-size: 14px; color: #aaa; margin: 10px 0 0 0; font-style: italic;">Nhấn vào mục tin tức để xem chi tiết câu chuyện...</p>
+        </div>
 
-    <!-- KHU VỰC TRUYỆN VUI NẰM DƯỚI CÙNG -->
-    <div class="funny-story">
-        <p style="color: #ffaa00; font-weight: bold; margin-top: 0; margin-bottom: 15px; font-size: 18px;">Góc giải trí: Con gà khôn hơn cáo 🐔🦊</p>
-        <!-- ĐÃ SỬA: Link ảnh minh họa truyện vui hoạt hình dễ thương -->
-        <img src="https://unsplash.com" alt="Truyện vui Con gà khôn hơn cáo">
     </div>
     
 </body>
-</html>
+    </html>
+                
