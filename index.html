@@ -19,7 +19,7 @@
     nav a {
         color: #66fcf1;
         text-decoration: none;
-        margin: 0 15px; /* Điều chỉnh lại khoảng cách để vừa thêm nút Bán hàng */
+        margin: 0 15px; 
         font-weight: bold;
         font-size: 17px;
         transition: 0.3s;
@@ -34,6 +34,20 @@
     
     .container { max-width: 1300px; margin: 30px auto; padding: 0 20px; box-sizing: border-box; text-align: center; }
     .welcome-text { margin: 50px 0; font-size: 18px; color: #8892b0; line-height: 1.8; }
+    
+    /* Cấu hình khu vực truyện vui */
+    .funny-story {
+        text-align: center;
+        margin-top: 40px;
+        padding-bottom: 40px;
+    }
+    .funny-story img {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
 </style>
 </head>
 <body>
@@ -54,7 +68,8 @@
             <div style="background: #1f2833; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.5); padding: 20px; text-align: center;">
                 <h1 style="font-size: 24px; margin: 0 0 10px 0; color: #45f3ff; letter-spacing: 1px;">CHÀO MỪNG ĐẾN VỚI MINNI WORLD</h1>
                 <p style="font-size: 14px; color: #ccc; margin: 0 0 20px 0; line-height: 1.4;">Khám phá thế giới giải trí, tin tức việc làm & công cụ tiện ích miễn phí</p>
-                <img src="https://imgbox.com" alt="Minni World Banner" style="width: 100%; height: auto; border-radius: 8px; max-width: 600px; display: inline-block;">
+                <!-- ĐÃ SỬA: Link ảnh Banner công nghệ siêu nét -->
+                <img src="https://unsplash.com" alt="Minni World Banner" style="width: 100%; height: auto; border-radius: 8px; max-width: 600px; display: inline-block;">
             </div>
         </div>
         
@@ -65,11 +80,13 @@
         </div>
 
     </div>
-<!-- KHU VỰC TRUYỆN VUI NẰM DƯỚI CÙNG -->
-<div class="funny-story">
-    <p style="color: #ffaa00; font-weight: bold; margin-top: 0; margin-bottom: 10px;">Góc giải trí: Con gà khôn hơn cáo 🐔🦊</p>
-    <img src="https://imgbox.com" alt="Truyện vui Con gà khôn hơn cáo">
-</div>
+
+    <!-- KHU VỰC TRUYỆN VUI NẰM DƯỚI CÙNG -->
+    <div class="funny-story">
+        <p style="color: #ffaa00; font-weight: bold; margin-top: 0; margin-bottom: 15px; font-size: 18px;">Góc giải trí: Con gà khôn hơn cáo 🐔🦊</p>
+        <!-- ĐÃ SỬA: Link ảnh minh họa truyện vui hoạt hình dễ thương -->
+        <img src="https://unsplash.com" alt="Truyện vui Con gà khôn hơn cáo">
+    </div>
     
 </body>
 </html>
