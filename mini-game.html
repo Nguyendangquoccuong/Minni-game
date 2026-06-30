@@ -9,14 +9,13 @@
         margin: 0; padding: 20px 10px; background-color: #0b0c16; color: white;
         font-family: Arial, sans-serif; text-align: center; box-sizing: border-box;
     }
-    h1 { margin-top: 20px; color: #00e676; font-size: 24px; }
-    p { color: #888; font-size: 14px; margin-bottom: 30px; }
+    h1 { margin-top: 40px; color: #00e676; font-size: 24px; }
+    p { color: #888; font-size: 14px; margin-bottom: 40px; }
     
     .menu-container {
         display: flex; flex-direction: column; align-items: center; gap: 15px;
     }
     
-    /* Thiết kế nút chọn game to rõ, dễ bấm trên điện thoại */
     .btn-select {
         width: 100%; max-width: 320px; padding: 18px; 
         background-color: #161730; border: 2px solid #333;
@@ -27,41 +26,22 @@
     .btn-select h2 { margin: 0 0 5px 0; font-size: 18px; }
     .btn-select span { font-size: 12px; color: #aaa; }
     
-    /* Đổi màu viền để phân biệt */
-    .tank { border-color: #ff5722; }
-    .tank h2 { color: #ff5722; }
-    
     .tetris { border-color: #00e676; }
     .tetris h2 { color: #00e676; }
-    
-    .btn-back {
-        display: inline-block; padding: 10px 24px; background-color: #ff5722;
-        color: white; text-decoration: none; border-radius: 20px;
-        font-weight: bold; font-size: 14px; margin-top: 40px;
-    }
 </style>
 </head>
 <body>
 
-    <h1>🎮 DANH SÁCH TRÒ CHƠI 🎮</h1>
-    <p>Chạm vào trò chơi bạn muốn mở</p>
+    <h1>🎮 TRUNG TÂM GAME 🎮</h1>
+    <p>Chạm vào trò chơi bên dưới để bắt đầu</p>
 
     <div class="menu-container">
-        <!-- Nút mở lại Game Xe Tăng cũ (Dẫn về trang chủ index.html nơi chứa game xe tăng gốc của bạn) -->
-        <a href="index.html" class="btn-select tank">
-            <h2>🚀 GAME XE TĂNG VŨ TRỤ</h2>
-            <span>Chạm để quay về trang chủ chơi game xe tăng</span>
-        </a>
-
-        <!-- Nút mở Game Xếp Gạch mới tạo -->
+        <!-- Chỉ giữ lại Game Xếp Gạch -->
         <a href="xepgach.html" class="btn-select tetris">
             <h2>🧱 GAME XẾP GẠCH CỔ ĐIỂN</h2>
             <span>Chơi game xếp gạch có âm thanh vui tai</span>
         </a>
     </div>
-
-    <!-- Nút quay về trang chính -->
-    <a href="index.html" class="btn-back">← Quay về trang chủ</a>
 
 </body>
 </html>
