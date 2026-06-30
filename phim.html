@@ -1,196 +1,109 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MINNI CINEMA - Giao Diện Điện Ảnh Đẳng Cấp</title>
-<style>
-    /* Phong cách Netflix bóng đêm huyền bí */
-    body {
-        margin: 0; padding: 0; background-color: #06070d; color: #ffffff;
-        font-family: 'Segoe UI', Arial, sans-serif; -webkit-font-smoothing: antialiased;
-    }
-    
-    /* Header rực rỡ hiệu ứng Neon */
-    .header {
-        padding: 30px 15px 15px 15px; text-align: center;
-        background: linear-gradient(to bottom, rgba(229, 9, 20, 0.2), transparent);
-    }
-    .header h1 { 
-        margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 2px; color: #e50914;
-        text-shadow: 0 0 10px rgba(229, 9, 20, 0.6);
-    }
-    .header p { margin: 6px 0 0 0; font-size: 13px; color: #aaa; }
-    
-    .container { max-width: 500px; margin: 0 auto; padding: 0 15px 100px 15px; box-sizing: border-box; }
-    
-    .section-title {
-        text-align: left; font-size: 16px; font-weight: bold; color: #fff;
-        margin: 20px 0 12px 0; border-left: 4px solid #e50914; padding-left: 8px;
-    }
-
-    /* Lưới danh sách phim dạng Poster đứng cực xịn */
-    .movie-grid {
-        display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
-    }
-    
-    /* Thẻ Phim chuẩn rạp chiếu */
-    .movie-card {
-        background: #14151f; border-radius: 12px; overflow: hidden;
-        border: 1px solid #222533; position: relative;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.4); transition: transform 0.2s;
-    }
-    .movie-card:active { transform: scale(0.96); }
-    
-    /* Khung chứa ảnh Poster tỷ lệ 3:4 */
-    .poster-box {
-        position: relative; width: 100%; height: 0; padding-bottom: 135%;
-        background-color: #111;
-    }
-    .poster-img {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
-    }
-    
-    /* Biểu tượng nút Play mờ ảo đè lên ảnh */
-    .play-overlay {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;
-    }
-    .play-icon {
-        width: 45px; height: 45px; background: rgba(229, 9, 20, 0.9); border-radius: 50%;
-        display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;
-        box-shadow: 0 0 15px rgba(229, 9, 20, 0.5);
-    }
-
-    .movie-info { padding: 10px; text-align: left; }
-    .movie-title { font-size: 14px; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .movie-meta { font-size: 11px; color: #e50914; font-weight: 600; margin-top: 2px; }
-    
-    /* KHUNG POPUP XEM PHIM BẬT LÊN (MODAL SCREEN) */
-    .modal {
-        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.95); z-index: 100; align-items: center; justify-content: center;
-        padding: 15px; box-sizing: border-box; backdrop-filter: blur(8px);
-    }
-    .modal-content {
-        width: 100%; max-width: 450px; background: #14151f; border-radius: 16px;
-        overflow: hidden; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .video-wrapper { position: relative; width: 100%; height: 0; padding-bottom: 56.25%; background: #000; }
-    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-    
-    .modal-body { padding: 15px; text-align: left; }
-    .modal-title { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 6px; }
-    .modal-desc { font-size: 13px; color: #aaa; line-height: 1.5; text-align: justify; margin-bottom: 15px; }
-    .btn-close {
-        width: 100%; padding: 10px; background: #222; border: none; color: #fff;
-        font-weight: bold; border-radius: 8px; font-size: 14px;
-    }
-
-    /* Tiện ích mua hàng Shopee phong cách sang trọng */
-    .cinema-tip {
-        background: linear-gradient(135deg, #1f1112, #140809); border: 1px solid #401014;
-        padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: left;
-    }
-    .cinema-tip p { margin: 0; font-size: 13px; color: #ccc; line-height: 1.5; }
-    .shop-link { display: inline-block; margin-top: 8px; color: #e50914; text-decoration: none; font-weight: bold; font-size: 13px; }
-    
-    /* Nút quay về trang chủ cố định ở góc dưới */
-    .btn-back {
-        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-        padding: 12px 30px; background-color: #e50914; color: white;
-        text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 14px;
-        box-shadow: 0 4px 15px rgba(229,9,20,0.4); z-index: 50;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phim Bom Tấn Nổi Bật - Minni World</title>
+    <style>
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #0d0e15; color: white; font-family: 'Segoe UI', Arial, sans-serif; }
+        
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
+        
+        .section-title { font-size: 18px; font-weight: bold; border-left: 4px solid #ff003c; padding-left: 10px; margin: 20px 0; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* LƯỚI PHIM VÀ THẺ PHIM */
+        .movie-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        
+        /* Biến toàn bộ thẻ phim thành một nút bấm có thể click */
+        .movie-card { background-color: #141622; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
+        .movie-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 0, 60, 0.2); border-color: rgba(255, 0, 60, 0.3); }
+        
+        /* Khung chứa ảnh và nút Play */
+        .thumbnail-container { position: relative; width: 100%; padding-top: 140%; /* Tạo tỷ lệ khung hình dọc */ background-color: #1a1c2e; overflow: hidden; }
+        
+        /* Sửa lỗi hiển thị ảnh bìa */
+        .thumbnail-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Nút Play màu đỏ ở trung tâm */
+        .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background-color: #ff003c; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255,0,60,0.6); transition: 0.2s; z-index: 2; }
+        .play-btn::after { content: ''; display: block; width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 16px solid white; margin-left: 4px; }
+        .movie-card:hover .play-btn { transform: translate(-50%, -50%) scale(1.1); background-color: #ff2a5f; box-shadow: 0 0 25px rgba(255,0,60,0.9); }
+        
+        /* Phần thông tin chữ bên dưới */
+        .movie-info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .movie-title { font-size: 14px; font-weight: bold; margin-bottom: 4px; color: #fff; line-height: 1.4; }
+        .movie-genre { font-size: 11px; color: #ff0055; font-weight: 500; }
+        
+        /* NÚT QUAY LẠI TRANG CHỦ */
+        .btn-back-container { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 0; background: linear-gradient(to top, #0d0e15 70%, transparent); text-align: center; z-index: 10; }
+        .btn-back { display: inline-block; padding: 10px 35px; background: #ff003c; color: white; text-decoration: none; border-radius: 25px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(255,0,60,0.4); transition: 0.2s; }
+        .btn-back:hover { background: #ff2a5f; transform: scale(1.05); }
+    </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>MINNI CINEMA</h1>
-        <p>Trải nghiệm điện ảnh đỉnh cao, hình ảnh chuẩn rạp</p>
-    </div>
-
     <div class="container">
+        <div class="section-title">Phim Bom Tấn Nổi Bật</div>
         
-        <div class="cinema-tip">
-            <p><strong>🍿 Rạp Phim Bỏ Túi:</strong> Thưởng thức trọn vẹn các siêu phẩm điện ảnh với màn hình chiếu 100 inch siêu nét ngay tại nhà bằng máy chiếu mini thông minh.</p>
-            <a href="https://shopee.vn" class="shop-link" target="_blank">👉 Khám phá máy chiếu mini giá tốt trên Shopee</a>
-        </div>
-
-        <div class="section-title">PHIM BOM TẤN NỔI BẬT</div>
-
-        <!-- LƯỚI PHIM POSTER DỌC CHUẨN NETFLIX -->
         <div class="movie-grid">
-
-            <!-- PHIM 1 -->
-            <div class="movie-card" onclick="openModal('Kẻ Trộm Mặt Trăng 4', 'Siêu ác nhân hoàn lương Gru đối mặt với kẻ thù cũ Maxime Le Mal vượt ngục trả thù. Điểm nhấn là nhóm Mega Minions sở hữu huyết thanh siêu năng lực nhưng đầu óc vẫn vô cùng ngáo ngơ, mang lại những trận cười thả ga cho khán giả.', 'https://youtube-nocookie.com')">
-                <div class="poster-box">
-                    <img class="poster-img" src="https://unsplash.com" alt="Minions">
-                    <div class="play-overlay"><div class="play-icon">▶</div></div>
+            
+            <!-- THẺ PHIM 1: KẺ TRỘM MẶT TRĂNG 4 -->
+            <!-- Thay link xem phim của bạn vào chỗ href="#" bên dưới -->
+            <a href="link-xem-phim-minions.html" class="movie-card">
+                <div class="thumbnail-container">
+                    <!-- Lưu ý: Thay đổi src thành đường dẫn ảnh đúng trên github của bạn -->
+                    <img src="images/minions4.jpg" alt="Kẻ Trộm Mặt Trăng 4">
+                    <div class="play-btn"></div>
                 </div>
                 <div class="movie-info">
                     <div class="movie-title">Kẻ Trộm Mặt Trăng 4</div>
-                    <div class="movie-meta">Hoạt Hình / Hài Hước</div>
+                    <div class="movie-genre">Hoạt Hình / Hài Hước</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- PHIM 2 -->
-            <div class="movie-card" onclick="openModal('Quá Nhanh Quá Nguy Hiểm', 'Hành trình nghẹt thở của Dominic Toretto và gia đình quái xế chống lại các thế lực tội phạm nguy hiểm xuyên quốc gia. Những pha quăng xe thể thao triệu đô cực gắt và rượt đuổi tốc độ cao đỉnh cao màn ảnh.', 'https://youtube-nocookie.com')">
-                <div class="poster-box">
-                    <img class="poster-img" src="https://unsplash.com" alt="Fast">
-                    <div class="play-overlay"><div class="play-icon">▶</div></div>
+            <!-- THẺ PHIM 2: FAST & FURIOUS -->
+            <a href="link-xem-phim-fast.html" class="movie-card">
+                <div class="thumbnail-container">
+                    <img src="images/fast-furious.jpg" alt="Fast & Furious">
+                    <div class="play-btn"></div>
                 </div>
                 <div class="movie-info">
                     <div class="movie-title">Fast & Furious</div>
-                    <div class="movie-meta">Hành Động / Đua Xe</div>
+                    <div class="movie-genre">Hành Động / Đua Xe</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- PHIM 3 -->
-            <div class="movie-card" onclick="openModal('Godzilla x Kong', 'Hai đại quái thú huyền thoại Godzilla và Kong bắt buộc phải gạt bỏ hiềm khích cũ, bắt tay lập liên minh để chống lại một mối đe dọa hủy diệt mới từ sâu trong lòng Trái Đất, giải cứu sự sống của toàn nhân loại.', 'https://youtube-nocookie.com')">
-                <div class="poster-box">
-                    <img class="poster-img" src="https://unsplash.com" alt="Godzilla">
-                    <div class="play-overlay"><div class="play-icon">▶</div></div>
+            <!-- THẺ PHIM 3: GODZILLA X KONG -->
+            <a href="link-xem-phim-godzilla.html" class="movie-card">
+                <div class="thumbnail-container">
+                    <img src="images/godzilla.jpg" alt="Godzilla x Kong">
+                    <div class="play-btn"></div>
                 </div>
                 <div class="movie-info">
                     <div class="movie-title">Godzilla x Kong</div>
-                    <div class="movie-meta">Viễn Tưởng / Quái Vật</div>
+                    <div class="movie-genre">Viễn Tưởng / Quái Vật</div>
                 </div>
-            </div>
+            </a>
 
-            <!-- PHIM 4 -->
-            <div class="movie-card" onclick="openModal('Ám Ảnh Kinh Hoàng', 'Dựa trên hồ sơ vụ án có thật của hai nhà ngoại cảm Ed và Lorraine Warren. Câu chuyện nghẹt thở về hành trình giải cứu một gia đình bị các thế lực quỷ dữ tà ác quấy phá trong căn nhà hoang sơ đầy bí ẩn.', 'https://youtube-nocookie.com')">
-                <div class="poster-box">
-                    <img class="poster-img" src="https://unsplash.com" alt="Kinh di">
-                    <div class="play-overlay"><div class="play-icon">▶</div></div>
+            <!-- THẺ PHIM 4: THE CONJURING -->
+            <a href="link-xem-phim-conjuring.html" class="movie-card">
+                <div class="thumbnail-container">
+                    <img src="images/conjuring.jpg" alt="The Conjuring">
+                    <div class="play-btn"></div>
                 </div>
                 <div class="movie-info">
                     <div class="movie-title">The Conjuring</div>
-                    <div class="movie-meta">Kinh Dị / Tâm Linh</div>
+                    <div class="movie-genre">Kinh Dị / Tâm Linh</div>
                 </div>
-            </div>
+            </a>
 
         </div>
     </div>
 
-    <!-- KHUNG BẬT LÊN XEM VIDEO (MODAL SCREEN HTML) -->
-    <div class="modal" id="videoModal">
-        <div class="modal-content">
-            <div class="video-wrapper">
-                <iframe id="modalIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <div class="modal-body">
-                <div class="modal-title" id="modalTitle">Tên Phim</div>
-                <div class="modal-desc" id="modalDesc">Mô tả phim...</div>
-                <button class="btn-close" onclick="closeModal()">ĐÓNG CỬA SỔ XEM</button>
-            </div>
-        </div>
+    <div class="btn-back-container">
+        <a href="index.html" class="btn-back">← Về trang chủ</a>
     </div>
 
-    <a href="index.html" class="btn-back">⬅ Về trang chủ</a>
-
-<script>
-    const modal = document.getElementById('videoModal');
-    const modalIframe = document.getElementById('modalIframe');
-    
+</body>
+                    </html>
+                    
