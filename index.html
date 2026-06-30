@@ -3,87 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Trung Tâm Game</title>
+<title>MINNI WORLD - Trang Chủ</title>
 <style>
     body {
-        margin: 0; padding: 20px 10px; background-color: #0b0c16; color: white;
-        font-family: Arial, sans-serif; text-align: center; box-sizing: border-box;
+        margin: 0; padding: 0; background-color: #0b0c10; color: #eee;
+        font-family: 'Segoe UI', Arial, sans-serif;
     }
-    h1 { margin-top: 20px; color: #00e676; font-size: 24px; }
-    p { color: #888; font-size: 14px; margin-bottom: 30px; }
-    
-    .menu-container {
-        display: flex; flex-direction: column; align-items: center; gap: 15px;
+    /* Thanh menu màu xanh của bạn */
+    nav {
+        background-color: #1f2833;
+        padding: 18px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    nav a {
+        color: #66fcf1;
+        text-decoration: none;
+        margin: 0 15px; /* Điều chỉnh lại khoảng cách để vừa thêm nút Bán hàng */
+        font-weight: bold;
+        font-size: 17px;
+        transition: 0.3s;
+    }
+    nav a:hover {
+        color: #45f3ff;
+    }
+    /* Làm nổi bật nút Bán Hàng */
+    nav a.shop-btn {
+        color: #ffeb3b;
     }
     
-    /* Thiết kế nút chọn game to rõ, dễ bấm trên điện thoại */
-    .btn-select {
-        width: 100%; max-width: 320px; padding: 18px; 
-        background-color: #161730; border: 2px solid #333;
-        border-radius: 12px; text-decoration: none; color: white; 
-        display: block; box-sizing: border-box;
-    }
-    
-    .btn-select h2 { margin: 0 0 5px 0; font-size: 18px; }
-    .btn-select span { font-size: 12px; color: #aaa; }
-    
-    /* Đổi màu viền để phân biệt */
-    .tank { border-color: #ff5722; }
-    .tank h2 { color: #ff5722; }
-    
-    .tetris { border-color: #00e676; }
-    .tetris h2 { color: #00e676; }
-    
-    .btn-back {
-        display: inline-block; padding: 10px 24px; background-color: #ff5722;
-        color: white; text-decoration: none; border-radius: 20px;
-        font-weight: bold; font-size: 14px; margin-top: 40px; margin-bottom: 40px;
-    }
-
-    /* Khung chứa ảnh truyện vui */
-    .funny-story {
-        margin: 40px auto 20px auto;
-        max-width: 450px;
-        padding: 10px;
-        background-color: #161730;
-        border: 1px solid #333;
-        border-radius: 12px;
-    }
-    .funny-story img {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-        display: block;
-    }
+    .container { max-width: 1300px; margin: 30px auto; padding: 0 20px; box-sizing: border-box; text-align: center; }
+    .welcome-text { margin: 50px 0; font-size: 18px; color: #8892b0; line-height: 1.8; }
 </style>
 </head>
 <body>
 
-    <h1>🎮 DANH SÁCH TRÒ CHƠI 🎮</h1>
-    <p>Chạm vào trò chơi bạn muốn mở</p>
+    <!-- THANH MENU MỚI: ĐÃ THÊM MỤC BÁN HÀNG -->
+    <nav>
+        <a href="#">Mini Game</a>
+        <a href="#">Nhà đất</a>
+        <a href="#">Tin tức</a>
+        <a href="phim.html">Xem phim</a>
+        <a href="banhang.html" class="shop-btn">🛍️ Bán hàng</a>
+    </nav>
 
-    <div class="menu-container">
-        <!-- Nút mở lại Game Xe Tăng cũ (Dẫn về trang chủ index.html nơi chứa game xe tăng gốc của bạn) -->
-        <a href="index.html" class="btn-select tank">
-            <h2>🚀 GAME XE TĂNG VŨ TRỤ</h2>
-            <span>Chạm để quay về trang chủ chơi game xe tăng</span>
-        </a>
+    <div class="container">
+        
+        <!-- KHUNG ẢNH BANNER TRANG CHỦ TỰ CO GIÃN - ĐÃ FIX LINK ẢNH SIÊU NÉT -->
+        <div style="width: 100%; max-width: 1200px; margin: 20px auto; padding: 0 10px; box-sizing: border-box;">
+            <div style="background: #1f2833; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.5); padding: 20px; text-align: center;">
+                <h1 style="font-size: 24px; margin: 0 0 10px 0; color: #45f3ff; letter-spacing: 1px;">CHÀO MỪNG ĐẾN VỚI MINNI WORLD</h1>
+                <p style="font-size: 14px; color: #ccc; margin: 0 0 20px 0; line-height: 1.4;">Khám phá thế giới giải trí, tin tức việc làm & công cụ tiện ích miễn phí</p>
+                <img src="https://imgbox.com" alt="Minni World Banner" style="width: 100%; height: auto; border-radius: 8px; max-width: 600px; display: inline-block;">
+            </div>
+        </div>
+        
 
-        <!-- Nút mở Game Xếp Gạch mới tạo -->
-        <a href="xepgach.html" class="btn-select tetris">
-            <h2>🧱 GAME XẾP GẠCH CỔ ĐIỂN</h2>
-            <span>Chơi game xếp gạch có âm thanh vui tai</span>
-        </a>
+        <!-- Lời chào trang chủ to rõ hơn -->
+        <div class="welcome-text">
+            <p>Chào mừng bạn đã ghé thăm website chính thức của chúng tôi. <br>Hãy bấm vào các danh mục trên thanh menu để trải nghiệm dịch vụ.</p>
+        </div>
+
     </div>
-
-    <!-- Nút quay về trang chính -->
-    <a href="index.html" class="btn-back">← Quay về trang chủ</a>
-
-    <!-- KHU VỰC TRUYỆN VUI NẰM DƯỚI CÙNG -->
-    <div class="funny-story">
-        <p style="color: #ffaa00; font-weight: bold; margin-top: 0; margin-bottom: 10px;">Góc giải trí: Con gà khôn hơn cáo 🐔🦊</p>
-        <img src="con-ga-va-con-cao.jpg" alt="Truyện vui Con gà khôn hơn cáo">
-    </div>
-
+<!-- KHU VỰC TRUYỆN VUI NẰM DƯỚI CÙNG -->
+<div class="funny-story">
+    <p style="color: #ffaa00; font-weight: bold; margin-top: 0; margin-bottom: 10px;">Góc giải trí: Con gà khôn hơn cáo 🐔🦊</p>
+    <img src="https://imgbox.com" alt="Truyện vui Con gà khôn hơn cáo">
+</div>
+    
 </body>
 </html>
