@@ -3,45 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Trung Tâm Game</title>
+<title>Trung Tâm Game - MINNI WORLD</title>
 <style>
     body {
-        margin: 0; padding: 20px 10px; background-color: #0b0c16; color: white;
+        margin: 0; padding: 20px 10px 40px 10px; background-color: #0b0c16; color: white;
         font-family: Arial, sans-serif; text-align: center; box-sizing: border-box;
     }
-    h1 { margin-top: 40px; color: #00e676; font-size: 24px; }
-    p { color: #888; font-size: 14px; margin-bottom: 40px; }
+    h1 { margin-top: 40px; color: #00e676; font-size: 24px; text-shadow: 0 0 10px rgba(0, 230, 118, 0.3); }
+    p { color: #888; font-size: 14px; margin-bottom: 30px; }
     
+    .section-title {
+        color: #aaa; font-size: 14px; text-align: left; max-width: 340px; margin: 20px auto 10px auto;
+        font-weight: bold; border-left: 3px solid #00e676; padding-left: 8px;
+    }
+
     .menu-container {
         display: flex; flex-direction: column; align-items: center; gap: 15px;
     }
     
     .btn-select {
-        width: 100%; max-width: 320px; padding: 18px; 
+        width: 100%; max-width: 340px; padding: 15px; 
         background-color: #161730; border: 2px solid #333;
-        border-radius: 12px; text-decoration: none; color: white; 
+        border-radius: 15px; text-decoration: none; color: white; 
         display: block; box-sizing: border-box;
+        overflow: hidden;
+        transition: all 0.2s ease;
     }
     
-    .btn-select h2 { margin: 0 0 5px 0; font-size: 18px; }
+    .btn-select:hover, .btn-select:active {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255,255,255,0.1);
+    }
+    
+    .game-thumb {
+        width: 100%; height: 110px; object-fit: cover;
+        border-radius: 10px; margin-bottom: 10px;
+        border: 1px solid rgba(255,255,255,0.1); background-color: #0b0c16;
+    }
+    
+    .btn-select h2 { margin: 0 0 4px 0; font-size: 16px; }
     .btn-select span { font-size: 12px; color: #aaa; }
     
-    .tetris { border-color: #00e676; }
-    .tetris h2 { color: #00e676; }
+    /* Màu sắc viền cho các game đã kích hoạt */
+    .g-tetris { border-color: #00e676; } .g-tetris h2 { color: #00e676; }
+    .g-snake { border-color: #ff9100; } .g-snake h2 { color: #ff9100; }
+    .g-bird { border-color: #29b6f6; } .g-bird h2 { color: #29b6f6; }
+    .g-caro { border-color: #ec407a; } .g-caro h2 { color: #ec407a; }
+
+    /* Nút về trang chủ */
+    .btn-back { display: inline-block; margin-top: 30px; padding: 10px 20px; background-color: #222; color: #66fcf1; border: 1px solid #66fcf1; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 14px; }
 </style>
 </head>
 <body>
 
     <h1>🎮 TRUNG TÂM GAME 🎮</h1>
-    <p>Chạm vào trò chơi bên dưới để bắt đầu</p>
+    <p>Chạm vào trò chơi bên dưới để bắt đầu chơi ngay</p>
 
+    <div class="section-title">TRÒ CHƠI SẴN SÀNG (4 GAME)</div>
     <div class="menu-container">
-        <!-- Chỉ giữ lại Game Xếp Gạch -->
-        <a href="xepgach.html" class="btn-select tetris">
+        
+        <!-- Game 1: Xếp gạch -->
+        <a href="xepgach.html" class="btn-select g-tetris">
+            <img src="background.png" alt="Game Xếp Gạch" class="game-thumb">
             <h2>🧱 GAME XẾP GẠCH CỔ ĐIỂN</h2>
-            <span>Chơi game xếp gạch có âm thanh vui tai</span>
+            <span>Trò chơi xếp hình khối huyền thoại có âm thanh sống động</span>
         </a>
+
+        <!-- Game 2: Rắn săn mồi -->
+        <a href="ransanmoi.html" class="btn-select g-snake">
+            <img src="background.png" alt="Rắn Săn Mồi" class="game-thumb">
+            <h2>🐍 RẮN SĂN MỒI KHÔNG GIAN</h2>
+            <span>Điều khiển chú rắn ăn mồi chấm đỏ và phá kỷ lục điểm số</span>
+        </a>
+
+        <!-- Game 3: Flappy Bird -->
+        <a href="flappybird.html" class="btn-select g-bird">
+            <img src="background.png" alt="Flappy Bird" class="game-thumb">
+            <h2>🐦 CHÚ CHIM VỖ CÁNH</h2>
+            <span>Căn thật chuẩn để đưa chú chim vượt qua các ống khói xanh</span>
+        </a>
+
+        <!-- Game 4: Cờ Caro -->
+        <a href="caro.html" class="btn-select g-caro">
+            <img src="background.png" alt="Cờ Caro" class="game-thumb">
+            <h2>❌ CỜ CA-RÔ ĐẤU TRÍ O-X</h2>
+            <span>Trò chơi giải trí đấu trí 2 người trên cùng màn hình</span>
+        </a>
+
     </div>
 
+    <br>
+    <a href="index.html" class="btn-back">🏠 Về Trang Chủ Chính</a>
+
 </body>
-</html>
+                </html>
+                
