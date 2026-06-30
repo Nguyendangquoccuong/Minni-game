@@ -1,90 +1,199 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rắn Săn Mồi Không Gian</title>
+    <title>Rắn Săn Mồi Không Gian - Đồ Họa Đỉnh Cao</title>
     <style>
-        body { margin: 0; background-color: #0b0c16; color: white; font-family: Arial, sans-serif; text-align: center; }
-        canvas { background-color: #161730; display: block; margin: 20px auto; border: 2px solid #ff9100; border-radius: 10px; }
-        .score { font-size: 24px; color: #ff9100; font-weight: bold; margin-top: 20px; }
-        .btn-back { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #333; color: white; text-decoration: none; border-radius: 20px; }
-        .controls { display: grid; grid-template-columns: repeat(3, 60px); gap: 10px; justify-content: center; margin-top: 15px; }
-        .btn-ctrl { width: 60px; height: 60px; background: #222; border: 2px solid #ff9100; color: white; font-size: 20px; font-weight: bold; border-radius: 10px; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #03040b; color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; }
+        
+        /* BẢNG ĐIỂM THIẾT KẾ HUD ĐIỆN TỬ */
+        .header-panel { position: absolute; top: 15px; left: 0; width: 100%; display: flex; justify-content: space-around; align-items: center; font-weight: bold; z-index: 10; pointer-events: none; }
+        .level-badge { background: linear-gradient(135deg, #00ffcc, #0099ff); color: #060713; padding: 6px 20px; border-radius: 20px; font-size: 16px; box-shadow: 0 0 15px rgba(0,255,204,0.5); pointer-events: auto; text-transform: uppercase; letter-spacing: 1px; }
+        .score-board { font-size: 18px; color: #ff9100; text-shadow: 0 0 10px rgba(255,145,0,0.4); pointer-events: auto; letter-spacing: 1px; }
+        .score-board span { color: #fff; text-shadow: 0 0 5px #fff; }
+        
+        canvas { display: block; width: 100vw; height: 100vh; background-color: #050611; }
+        
+        /* OVERLAY KÍNH MỜ CAO CẤP */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 6, 17, 0.85); backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; }
+        .overlay h2 { color: #ff0055; margin: 0 0 10px 0; font-size: 42px; text-shadow: 0 0 20px rgba(255,0,85,0.7); letter-spacing: 3px; text-align: center; font-weight: 900; }
+        .overlay p { width: 80%; max-width: 400px; line-height: 1.5; color: #8a8dbe; font-size: 15px; text-align: center; margin-bottom: 30px; }
+        .btn-start { padding: 14px 45px; background: linear-gradient(45deg, #00ffcc, #ff0055); border: none; color: white; font-size: 18px; font-weight: bold; border-radius: 25px; cursor: pointer; box-shadow: 0 0 20px rgba(0,255,204,0.4); transition: all 0.3s ease; letter-spacing: 1px; }
+        .btn-start:hover { transform: scale(1.05) translateY(-2px); box-shadow: 0 0 30px rgba(255,0,85,0.7); }
+
+        /* TAY CẦM PHONG CÁCH NEON */
+        .game-pad-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 180px; display: none; justify-content: space-between; padding: 0 30px 30px 30px; box-sizing: border-box; z-index: 10; pointer-events: none; }
+        .pad-side { display: flex; gap: 15px; pointer-events: auto; align-items: center; }
+        
+        .btn-gamepad { width: 78px; height: 78px; background: rgba(20, 22, 50, 0.4); border: 2px solid rgba(0, 255, 204, 0.6); color: #00ffcc; font-size: 28px; font-weight: bold; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(0, 255, 204, 0.15); backdrop-filter: blur(5px); -webkit-tap-highlight-color: transparent; transition: all 0.1s ease; }
+        .btn-gamepad:active { background: linear-gradient(135deg, #ff0055, #ff00aa) !important; color: #fff !important; border-color: #ff0055 !important; box-shadow: 0 0 25px #ff0055 !important; transform: scale(0.9); }
+        
+        .btn-back { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 10; padding: 6px 22px; background-color: rgba(20, 22, 50, 0.5); border: 1px solid rgba(255,255,255,0.1); color: #5c5f85; text-decoration: none; border-radius: 20px; font-size: 12px; backdrop-filter: blur(5px); transition: 0.2s; }
+        .btn-back:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
-    <div class="score">Điểm: <span id="scoreVal">0</span></div>
-    <canvas id="gameCanvas" width="300" height="300"></canvas>
+    <div class="header-panel">
+        <div class="level-badge">SECTOR: <span id="levelVal">1</span></div>
+        <div class="score-board">CORE: <span id="scoreVal">0</span>/5</div>
+        <div class="score-board">MAX RECORD: <span id="highScoreVal">0</span></div>
+    </div>
     
-    <!-- Nút bấm điều khiển trên điện thoại -->
-    <div class="controls">
-        <td></td><button class="btn-ctrl" onclick="changeDir('UP')">▲</button><td></td>
-        <button class="btn-ctrl" onclick="changeDir('LEFT')">◀</button><td></td><button class="btn-ctrl" onclick="changeDir('RIGHT')">▶</button>
-        <td></td><button class="btn-ctrl" onclick="changeDir('DOWN')">▼</button><td></td>
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="gameOverlay" class="overlay">
+        <h2 id="overlayTitle">NEON ECLIPSE</h2>
+        <p id="overlaySub">Hệ thống đồ họa hạt thứ thế hệ mới đã kích hoạt. Tốc độ sẽ tăng lên sau mỗi Sector. Nhấn nút để phóng tàu.</p>
+        <button class="btn-start" id="startBtn" onclick="startGame()">ENGAGE SYSTEM</button>
+    </div>
+    
+    <div class="game-pad-container" id="mobileControls">
+        <div class="pad-side">
+            <button class="btn-gamepad" onclick="changeDir('LEFT')">◀</button>
+            <button class="btn-gamepad" onclick="changeDir('RIGHT')">▶</button>
+        </div>
+        <div class="pad-side">
+            <button class="btn-gamepad" onclick="changeDir('UP')">▲</button>
+            <button class="btn-gamepad" onclick="changeDir('DOWN')">▼</button>
+        </div>
     </div>
 
-    <br><a href="mini-game.html" class="btn-back">⬅ Quay lại danh sách</a>
+    <a href="mini-game.html" class="btn-back">DISCONNECT</a>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-        const box = 15;
-        let snake = [{x: 10 * box, y: 10 * box}];
-        let food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
-        let score = 0;
-        let d = "RIGHT";
+        
+        const box = 30; 
+        let cols, rows;
+        
+        let snake, food, score, d, gameLoop;
+        let currentLevel = 1;
+        let speed = 300; 
+        
+        let obstacles = [];      
+        let movingObstacles = [];
+        let moveCounter = 0; 
+        
+        // CÁC BIẾN PHỤ TRỢ ĐỒ HỌA CAO CẤP
+        let stars = [];          // Mảng chứa các hạt sao nền bay lơ lửng
+        let particles = [];      // Mảng chứa bụi nổ vỡ ra khi chết
+        let pulseTime = 0;       // Biến đếm nhịp đập của quả cầu mồi
+        let isDead = false;
+
+        let highScore = localStorage.getItem("snakeHighScoreInfinite") || 0;
+        document.getElementById("highScoreVal").innerText = highScore;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            cols = Math.floor(canvas.width / box);
+            rows = Math.floor(canvas.height / box);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Tạo 60 hạt sao nền chuyển động
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 60; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5 + 0.1
+                });
+            }
+        }
+
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+            document.getElementById("mobileControls").style.display = "flex";
+        }
+
+        function loadLevelData(level) {
+            obstacles = [];
+            movingObstacles = [];
+            let midX = Math.floor(cols / 2);
+            let midY = Math.floor(rows / 2);
+
+            speed = 350 - (level * 50); 
+
+            if (level === 2) {
+                obstacles.push({x: midX - 4, y: midY - 4}, {x: midX + 4, y: midY - 4}, {x: midX - 4, y: midY + 4}, {x: midX + 4, y: midY + 4});
+            } else if (level === 3) {
+                for(let i = -3; i <= 3; i++) {
+                    obstacles.push({x: midX + i, y: midY - 3});
+                }
+                movingObstacles.push({x: 2, y: midY, vx: 1, vy: 0});
+            } else if (level === 4) {
+                obstacles.push({x: midX, y: midY - 2}, {x: midX, y: midY + 2});
+                movingObstacles.push({x: 2, y: midY - 4, vx: 1, vy: 0});
+                movingObstacles.push({x: cols - 3, y: midY + 4, vx: -1, vy: 0});
+            }
+        }
+
+        function initGame() {
+            resizeCanvas();
+            initStars();
+            particles = [];
+            isDead = false;
+            snake = [{x: 4 * box, y: Math.floor(rows / 2) * box}]; 
+            loadLevelData(currentLevel); 
+            food = getRandomFoodPos();
+            score = 0;
+            d = "RIGHT";
+            moveCounter = 0;
+            
+            document.getElementById("scoreVal").innerText = score;
+            document.getElementById("levelVal").innerText = currentLevel;
+        }
+
+        function getRandomFoodPos() {
+            let pos;
+            while (true) {
+                pos = {
+                    x: Math.floor(Math.random() * cols) * box,
+                    y: Math.floor(Math.random() * rows) * box
+                };
+                let onObstacle = obstacles.some(obs => obs.x * box === pos.x && obs.y * box === pos.y);
+                let onMoving = movingObstacles.some(obs => obs.x * box === pos.x && obs.y * box === pos.y);
+                let onSnake = snake.some(s => s.x === pos.x && s.y === pos.y);
+                let nearEdge = (pos.x < box || pos.y < box * 3 || pos.x > canvas.width - box * 2 || pos.y > canvas.height - box * 3);
+                
+                if (!onObstacle && !onMoving && !onSnake && !nearEdge) break;
+            }
+            return pos;
+        }
+
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 30; i++) {
+                particles.push({
+                    x: x + box/2,
+                    y: y + box/2,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    size: Math.random() * 4 + 1,
+                    alpha: 1,
+                    color: color
+                });
+            }
+        }
+
+        function startGame() {
+            document.getElementById("gameOverlay").style.display = "none";
+            initGame();
+            runGame();
+        }
+
+        function runGame() {
+            clearInterval(gameLoop);
+            gameLoop = setInterval(draw, speed);
+        }
 
         function changeDir(dir) {
+            if (isDead) return;
             if(dir == "LEFT" && d != "RIGHT") d = "LEFT";
             if(dir == "UP" && d != "DOWN") d = "UP";
             if(dir == "RIGHT" && d != "LEFT") d = "RIGHT";
-            if(dir == "DOWN" && d != "UP") d = "DOWN";
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for(let i=0; i<snake.length; i++) {
-                ctx.fillStyle = (i == 0) ? "#ff9100" : "#fff";
-                ctx.fillRect(snake[i].x, snake[i].y, box, box);
-            }
-            ctx.fillStyle = "red";
-            ctx.fillRect(food.x, food.y, box, box);
-
-            let snakeX = snake[0].x;
-            let snakeY = snake[0].y;
-
-            if(d == "LEFT") snakeX -= box;
-            if(d == "UP") snakeY -= box;
-            if(d == "RIGHT") snakeX += box;
-            if(d == "DOWN") snakeY += box;
-
-            if(snakeX == food.x && snakeY == food.y) {
-                score++;
-                document.getElementById("scoreVal").innerText = score;
-                food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
-            } else {
-                snake.pop();
-            }
-
-            let newHead = { x: snakeX, y: snakeY };
-
-            if(snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
-                clearInterval(game);
-                alert("Game Over! Điểm của bạn: " + score);
-                location.reload();
-            }
-            snake.unshift(newHead);
-        }
-
-        function collision(head, array) {
-            for(let i=0; i<array.length; i++) { if(head.x == array[i].x && head.y == array[i].y) return true; }
-            return false;
-        }
-
-        let game = setInterval(draw, 150);
-    </script>
-</body>
-  </html>
-  
+        
