@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MINNI WORLD - Tin Tức Công Nghệ</title>
+<title>MINNI WORLD - Tin Tức Tổng Hợp</title>
 <style>
     body {
         margin: 0; padding: 0; background-color: #f4f6f9; color: #333;
@@ -17,11 +17,24 @@
     .header p { margin: 5px 0 0 0; font-size: 13px; color: #e3f2fd; }
     
     .container { max-width: 600px; margin: 20px auto; padding: 0 15px; box-sizing: border-box; }
-    .article-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+    .article-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
     
     h2 { color: #1565c0; font-size: 20px; margin-top: 0; line-height: 1.4; }
     p { margin: 0 0 15px 0; font-size: 14px; color: #444; text-align: justify; }
     
+    .time-stamp { font-size: 12px; color: #888; margin-bottom: 10px; display: block; }
+    
+    /* Giao diện Bảng tài chính */
+    .finance-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 13px; }
+    .finance-table th, .finance-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    .finance-table th { background-color: #f5f5f5; color: #1565c0; }
+    .up-price { color: #2e7d32; font-weight: bold; }
+    .down-price { color: #c62828; font-weight: bold; }
+
+    /* CSS cho biểu đồ SVG tự động vẽ bằng JS */
+    .chart-container { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 10px; text-align: center; margin: 15px 0; }
+    .chart-title { font-size: 12px; font-weight: bold; color: #555; margin-bottom: 5px; }
+
     .tip-box {
         background-color: #e3f2fd; border-left: 4px solid #2196f3;
         padding: 12px; border-radius: 4px; margin-top: 25px; font-size: 13px;
@@ -31,39 +44,142 @@
         text-decoration: none; font-weight: bold; font-size: 14px;
     }
     .footer { text-align: center; margin: 30px 0; }
-    .btn-back {
-        display: inline-block; padding: 10px 24px; background-color: #333;
-        color: white; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px;
+    .btn-refresh {
+        display: inline-block; padding: 10px 24px; background-color: #2196f3;
+        color: white; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px; border: none; cursor: pointer;
     }
 </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>📰 TIN CÔNG NGHỆ 24H</h1>
-        <p>Điểm tin tức công nghệ, xu hướng điện thoại và máy tính mới nhất</p>
+        <h1>📰 MINNI WORLD AUTOMATED NEWS</h1>
+        <p>Hệ thống tự động cập nhật Tin công nghệ & Thị trường Tài chính 24h</p>
     </div>
 
-    <div class="container">
-        <div class="article-box">
-            <h2>Cảnh Báo Mới: Giá Điện Thoại Và Máy Tính Năm 2026 Dự Kiến Tăng Mạnh Vì Khan Hiếm Linh Kiện</h2>
-            
-            <p>Nếu bạn đang có ý định nâng cấp điện thoại thông minh, máy tính bảng hay laptop mới, thì đây là thời điểm bạn cần phải cân nhắc thật kỹ trước khi đưa ra quyết định mua sắm.</p>
-            
-            <p>Theo các báo cáo phân tích thị trường công nghệ mới nhất ghi nhận vào cuối tháng 6/2026, giá các thiết bị điện tử thông minh trên toàn cầu đang đứng trước nguy cơ tăng trưởng mạnh. Nguyên nhân cốt lõi bắt nguồn từ việc chi phí sản xuất chip xử lý tích hợp trí tuệ nhân tạo (AI) ngày càng đắt đỏ, kết hợp với sự khan hiếm nghiêm trọng của các chuỗi cung ứng vật liệu bán dẫn trên thế giới.</p>
-            
-            <p>Các chuyên gia công nghệ đưa ra lời khuyên: Nếu thiết bị hiện tại của bạn vẫn hoạt động ổn định, hãy ưu tiên tối ưu hóa bộ nhớ và dọn dẹp rác hệ điều hành để kéo dài tuổi thọ cho máy, tránh lãng phí tiền bạc vào thời điểm bão giá. Ngược lại, nếu bắt buộc phải mua mới, hãy tận dụng các chương trình ưu đãi trực tuyến lớn để tiết kiệm chi phí tối đa.</p>
-
-            <div class="tip-box">
-                <strong>💡 Mẹo nhỏ cho bạn:</strong> Để bảo vệ chiếc điện thoại hiện tại của bạn luôn bền bỉ và không bị trầy xước trong mùa bão giá này, hãy trang bị ngay các loại ốp lưng chống va đập chất lượng cao.<br>
-                <a href="https://shopee.vn" class="affiliate-link" target="_blank">👉 Săn mã giảm giá Ốp Lưng Xịn trên Shopee ngay hôm nay</a>
-            </div>
-        </div>
+    <div class="container" id="news-container">
+        <!-- Nội dung tin tức sẽ tự động chèn vào đây bởi JavaScript -->
     </div>
 
     <div class="footer">
-        <a href="index.html" class="btn-back">⬅ Quay về trang chủ</a>
+        <button onclick="generateNews()" class="btn-refresh">🔄 Đổi Tin Tức Khác</button>
     </div>
 
-</body>
-</html>
+<script>
+    // Kho dữ liệu tin tức tích hợp Tài chính & Công nghệ mới nhất ngày 30/06/2026
+    const newsDatabase = [
+        {
+            type: "finance",
+            title: "Thị Trường 30/06: Giá Vàng Miếng SJC Rơi Thẳng Đứng 2 Triệu/Lượng, VN-Index Phục Hồi Cuối Phiên",
+            content: `
+                <p>Thị trường tài chính ngày 30/06/2026 chứng kiến những biến động cực kỳ mạnh mẽ ở cả hai kênh đầu tư truyền thống và kỹ thuật số. Giá vàng thế giới bất ngờ lao dốc không phanh, rơi xuống dưới mốc tâm lý quan trọng 4.000 USD/ounce.</p>
+                <p>Chịu áp lực từ đà giảm toàn cầu, giá vàng miếng SJC và vàng nhẫn trong nước đồng loạt bốc hơi tới 2.000.000 đồng/lượng ngay trong phiên giao dịch. Trái ngược với vàng, chỉ số chứng khoán VN-Index ghi nhận phiên bùng nổ rực rỡ ngày cuối tháng, lấy lại sắc xanh lan tỏa toàn thị trường.</p>
+                <table class="finance-table">
+                    <thead>
+                        <tr>
+                            <th>Tài sản</th>
+                            <th>Mốc giá hiện tại</th>
+                            <th>Biến động (24h)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>Vàng SJC</b></td>
+                            <td>146,00 Triệu/lượng</td>
+                            <td class="down-price">▼ Giảm 2,0 Triệu</td>
+                        </tr>
+                        <tr>
+                            <td><b>VN-Index</b></td>
+                            <td>1.860,04 Điểm</td>
+                            <td class="up-price">▲ Tăng 5,07 Điểm</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `,
+            // Tự động dựng biểu đồ đường SVG trực tiếp thay vì chèn ảnh tĩnh
+            chart: `
+                <div class="chart-container">
+                    <div class="chart-title">Xu hướng Vàng SJC & VN-Index tuần qua</div>
+                    <svg width="100%" height="120" viewBox="0 0 300 100">
+                        <!-- Đường biểu diễn Vàng giảm -->
+                        <path d="M10,20 L80,25 L150,45 L220,50 L290,90" fill="none" stroke="#c62828" stroke-width="2"/>
+                        <!-- Đường biểu diễn Chứng khoán tăng -->
+                        <path d="M10,80 L80,75 L150,60 L220,65 L290,40" fill="none" stroke="#2e7d32" stroke-width="2"/>
+                        <text x="10" y="15" fill="#c62828" font-size="10">Vàng SJC</text>
+                        <text x="200" y="35" fill="#2e7d32" font-size="10">VN-Index</text>
+                    </svg>
+                </div>
+            `,
+            tip: "Khi giá vàng giảm mạnh và chứng khoán bắt đầu siêu sóng, đây có thể là thời điểm thích hợp để cơ cấu lại danh mục đầu tư từ tích trữ sang tăng trưởng.",
+            link: "https://shopee.vn",
+            linkText: "👉 Sách hướng dẫn phân tích kỹ thuật chứng khoán giảm giá sốc"
+        },
+        {
+            type: "crypto",
+            title: "Bitcoin Giằng Co Quyết Liệt Dưới Ngưỡng 60.000 USD Trước Giờ Áp Thuế Mới",
+            content: `
+                <p>Tính đến ngày 30/06/2026, giá đồng Bitcoin (BTC) ghi nhận dao động nhẹ quanh mức 59.859 USD. Thị trường tiền mã hóa đang trải qua giai đoạn tích lũy tâm lý trong bối cảnh các nhà đầu tư cá nhân có xu hướng phòng thủ.</p>
+                <p>Nguyên nhân khiến dòng tiền lớn vẫn e dè một phần bắt nguồn từ áp lực kỹ thuật sau khi các quỹ ETF Bitcoin bị rút ròng hơn 4,4 tỷ USD trong tháng qua. Đồng thời, thị trường trong nước cũng đang đổ dồn sự chú ý vào quy định khấu trừ thuế giao dịch tài sản số bắt đầu áp dụng từ ngày 01/07.</p>
+                <table class="finance-table">
+                    <thead>
+                        <tr>
+                            <th>Tài sản số</th>
+                            <th>Giá (USD)</th>
+                            <th>Tâm lý thị trường</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>Bitcoin (BTC)</b></td>
+                            <td>59.859 USD</td>
+                            <td class="down-price">Sợ hãi tột độ (15/100)</td>
+                        </tr>
+                        <tr>
+                            <td><b>Ethereum (ETH)</b></td>
+                            <td>1.585 USD</td>
+                            <td class="up-price">▲ Hồi phục nhẹ 0.78%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `,
+            chart: `
+                <div class="chart-container">
+                    <div class="chart-title">Biểu đồ tích lũy hình nêm của Bitcoin (BTC/USD)</div>
+                    <svg width="100%" height="120" viewBox="0 0 300 100">
+                        <path d="M10,30 L60,70 L110,40 L160,65 L210,50 L260,55 L290,52" fill="none" stroke="#f57c00" stroke-width="2"/>
+                        <line x1="10" y1="25" x2="290" y2="50" stroke="#888" stroke-dasharray="4"/>
+                        <line x1="10" y1="75" x2="290" y2="55" stroke="#888" stroke-dasharray="4"/>
+                        <text x="10" y="20" fill="#f57c00" font-size="10">Mốc kháng cự 60,000 USD</text>
+                    </svg>
+                </div>
+            `,
+            tip: "Thị trường Crypto biến động mạnh cần một kết nối mạng ổn định cao để xử lý lệnh kịp thời không bị trễ giá.",
+            link: "https://shopee.vn",
+            linkText: "👉 Sắm Thiết Bị Kích Sóng Wi-Fi Tốc Độ Cao Cho Nhà Đầu Tư"
+        },
+        {
+            type: "tech",
+            title: "Cảnh Báo: Giá Điện Thoại Và Máy Tính Năm 2026 Dự Kiến Tăng Mạnh Do Linh Kiện AI",
+            content: "<p>Nếu bạn đang có ý định nâng cấp điện thoại thông minh hay laptop mới, hãy cân nhắc thật kỹ. Theo ghi nhận cuối tháng 6/2026, giá thiết bị phần cứng đang tăng vọt 10% - 15% do chi phí đúc chip AI trên tiến trình 2nm/3nm ngày càng đắt đỏ và chuỗi vật liệu bán dẫn bị khan hiếm nặng.</p>",
+            chart: "",
+            tip: "Để bảo vệ thiết bị hiện tại vượt qua thời kỳ bão giá phần cứng, hãy trang bị ngay các loại phụ kiện chống va đập chất lượng cao.",
+            link: "https://shopee.vn",
+            linkText: "👉 Săn mã giảm giá Ốp Lưng Xịn trên Shopee ngay hôm nay"
+        }
+    ];
+
+    function generateNews() {
+        // Xoay vòng lấy ngẫu nhiên nội dung tin tức tài chính - công nghệ
+        const randomIndex = Math.floor(Math.random() * newsDatabase.length);
+        const item = newsDatabase[randomIndex];
+        
+        // Cập nhật mốc thời gian thực động
+        const now = new Date();
+        const timeString = `Cập nhật hệ thống: ${now.getHours()}:${now.getMinutes()} - Ngày ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+
+        // Dựng cấu trúc giao diện hiển thị bài viết
+        const htmlContent = `
+            <div class="article-box">
+                <span class="time-stamp">⏱ ${timeString}</span>
+                <h2>${item.title}</h2>
+    
