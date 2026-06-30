@@ -1,185 +1,102 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MINNI WORLD - Tin Tức Tổng Hợp</title>
-<style>
-    body {
-        margin: 0; padding: 0; background-color: #f4f6f9; color: #333;
-        font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6;
-    }
-    .header {
-        background: linear-gradient(135deg, #1e88e5, #1565c0); color: white;
-        padding: 25px 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .header h1 { margin: 0; font-size: 24px; }
-    .header p { margin: 5px 0 0 0; font-size: 13px; color: #e3f2fd; }
-    
-    .container { max-width: 600px; margin: 20px auto; padding: 0 15px; box-sizing: border-box; }
-    .article-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-    
-    h2 { color: #1565c0; font-size: 20px; margin-top: 0; line-height: 1.4; }
-    p { margin: 0 0 15px 0; font-size: 14px; color: #444; text-align: justify; }
-    
-    .time-stamp { font-size: 12px; color: #888; margin-bottom: 10px; display: block; }
-    
-    /* Giao diện Bảng tài chính */
-    .finance-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 13px; }
-    .finance-table th, .finance-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-    .finance-table th { background-color: #f5f5f5; color: #1565c0; }
-    .up-price { color: #2e7d32; font-weight: bold; }
-    .down-price { color: #c62828; font-weight: bold; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Minni World Automated News</title>
+    <style>
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #0d0e15; color: white; font-family: 'Segoe UI', Arial, sans-serif; }
+        
+        /* HEADER ĐỒNG BỘ PHONG CÁCH NEON */
+        .header-news { background: linear-gradient(135deg, #0f1123, #1a1c38); padding: 30px 20px; text-align: center; border-bottom: 2px solid #00ffcc; box-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
+        .header-news h1 { font-size: 24px; margin: 0 0 10px 0; color: #fff; text-shadow: 0 0 10px #00ffcc; font-weight: 800; letter-spacing: 1px; }
+        .header-news p { font-size: 13px; margin: 0; color: #8a8dbe; line-height: 1.5; }
 
-    /* CSS cho biểu đồ SVG tự động vẽ bằng JS */
-    .chart-container { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 10px; text-align: center; margin: 15px 0; }
-    .chart-title { font-size: 12px; font-weight: bold; color: #555; margin-bottom: 5px; }
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; padding-bottom: 90px; }
 
-    .tip-box {
-        background-color: #e3f2fd; border-left: 4px solid #2196f3;
-        padding: 12px; border-radius: 4px; margin-top: 25px; font-size: 13px;
-    }
-    .affiliate-link {
-        display: inline-block; margin-top: 10px; color: #1565c0;
-        text-decoration: none; font-weight: bold; font-size: 14px;
-    }
-    .footer { text-align: center; margin: 30px 0; }
-    .btn-refresh {
-        display: inline-block; padding: 10px 24px; background-color: #2196f3;
-        color: white; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px; border: none; cursor: pointer;
-    }
-</style>
+        /* NÚT ĐỔI TIN TỨC */
+        .btn-action-container { text-align: center; margin-bottom: 25px; }
+        .btn-refresh { padding: 10px 25px; background: linear-gradient(45deg, #00ffcc, #0099ff); border: none; color: #060713; font-size: 14px; font-weight: bold; border-radius: 25px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,255,204,0.3); transition: 0.2s; }
+        .btn-refresh:hover { transform: scale(1.03); box-shadow: 0 0 20px #00ffcc; }
+
+        /* DANH SÁCH BÀI VIẾT (FIX LỖI HIỂN THỊ) */
+        .news-list { display: flex; flex-direction: column; gap: 15px; }
+        
+        .news-card { background-color: #141622; border-radius: 12px; padding: 15px; border: 1px solid rgba(255,255,255,0.05); text-decoration: none; color: inherit; transition: 0.2s; display: block; }
+        .news-card:hover { transform: translateY(-2px); border-color: #00ffcc; box-shadow: 0 4px 15px rgba(0, 255, 204, 0.1); }
+        
+        .news-tag { font-size: 10px; font-weight: bold; color: #00ffcc; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        .news-title { font-size: 15px; font-weight: bold; line-height: 1.4; margin-bottom: 8px; color: #fff; }
+        .news-desc { font-size: 13px; color: #8a8dbe; line-height: 1.5; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-time { font-size: 11px; color: #5c5f85; text-align: right; }
+
+        /* NÚT QUAY LẠI TRANG CHỦ */
+        .btn-back-container { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 0; background: linear-gradient(to top, #0d0e15 70%, transparent); text-align: center; z-index: 10; }
+        .btn-back { display: inline-block; padding: 9px 30px; background-color: rgba(20, 22, 50, 0.8); border: 1px solid rgba(0, 255, 204, 0.3); color: #00ffcc; text-decoration: none; border-radius: 20px; font-size: 13px; backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.2s; }
+        .btn-back:hover { background: #00ffcc; color: #060713; box-shadow: 0 0 15px #00ffcc; }
+    </style>
 </head>
 <body>
 
-    <div class="header">
+    <div class="header-news">
         <h1>📰 MINNI WORLD AUTOMATED NEWS</h1>
         <p>Hệ thống tự động cập nhật Tin công nghệ & Thị trường Tài chính 24h</p>
     </div>
 
-    <div class="container" id="news-container">
-        <!-- Nội dung tin tức sẽ tự động chèn vào đây bởi JavaScript -->
-    </div>
-
-    <div class="footer">
-        <button onclick="generateNews()" class="btn-refresh">🔄 Đổi Tin Tức Khác</button>
-    </div>
-
-<script>
-    // Kho dữ liệu tin tức tích hợp Tài chính & Công nghệ mới nhất ngày 30/06/2026
-    const newsDatabase = [
-        {
-            type: "finance",
-            title: "Thị Trường 30/06: Giá Vàng Miếng SJC Rơi Thẳng Đứng 2 Triệu/Lượng, VN-Index Phục Hồi Cuối Phiên",
-            content: `
-                <p>Thị trường tài chính ngày 30/06/2026 chứng kiến những biến động cực kỳ mạnh mẽ ở cả hai kênh đầu tư truyền thống và kỹ thuật số. Giá vàng thế giới bất ngờ lao dốc không phanh, rơi xuống dưới mốc tâm lý quan trọng 4.000 USD/ounce.</p>
-                <p>Chịu áp lực từ đà giảm toàn cầu, giá vàng miếng SJC và vàng nhẫn trong nước đồng loạt bốc hơi tới 2.000.000 đồng/lượng ngay trong phiên giao dịch. Trái ngược với vàng, chỉ số chứng khoán VN-Index ghi nhận phiên bùng nổ rực rỡ ngày cuối tháng, lấy lại sắc xanh lan tỏa toàn thị trường.</p>
-                <table class="finance-table">
-                    <thead>
-                        <tr>
-                            <th>Tài sản</th>
-                            <th>Mốc giá hiện tại</th>
-                            <th>Biến động (24h)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><b>Vàng SJC</b></td>
-                            <td>146,00 Triệu/lượng</td>
-                            <td class="down-price">▼ Giảm 2,0 Triệu</td>
-                        </tr>
-                        <tr>
-                            <td><b>VN-Index</b></td>
-                            <td>1.860,04 Điểm</td>
-                            <td class="up-price">▲ Tăng 5,07 Điểm</td>
-                        </tr>
-                    </tbody>
-                </table>
-            `,
-            // Tự động dựng biểu đồ đường SVG trực tiếp thay vì chèn ảnh tĩnh
-            chart: `
-                <div class="chart-container">
-                    <div class="chart-title">Xu hướng Vàng SJC & VN-Index tuần qua</div>
-                    <svg width="100%" height="120" viewBox="0 0 300 100">
-                        <!-- Đường biểu diễn Vàng giảm -->
-                        <path d="M10,20 L80,25 L150,45 L220,50 L290,90" fill="none" stroke="#c62828" stroke-width="2"/>
-                        <!-- Đường biểu diễn Chứng khoán tăng -->
-                        <path d="M10,80 L80,75 L150,60 L220,65 L290,40" fill="none" stroke="#2e7d32" stroke-width="2"/>
-                        <text x="10" y="15" fill="#c62828" font-size="10">Vàng SJC</text>
-                        <text x="200" y="35" fill="#2e7d32" font-size="10">VN-Index</text>
-                    </svg>
-                </div>
-            `,
-            tip: "Khi giá vàng giảm mạnh và chứng khoán bắt đầu siêu sóng, đây có thể là thời điểm thích hợp để cơ cấu lại danh mục đầu tư từ tích trữ sang tăng trưởng.",
-            link: "https://shopee.vn",
-            linkText: "👉 Sách hướng dẫn phân tích kỹ thuật chứng khoán giảm giá sốc"
-        },
-        {
-            type: "crypto",
-            title: "Bitcoin Giằng Co Quyết Liệt Dưới Ngưỡng 60.000 USD Trước Giờ Áp Thuế Mới",
-            content: `
-                <p>Tính đến ngày 30/06/2026, giá đồng Bitcoin (BTC) ghi nhận dao động nhẹ quanh mức 59.859 USD. Thị trường tiền mã hóa đang trải qua giai đoạn tích lũy tâm lý trong bối cảnh các nhà đầu tư cá nhân có xu hướng phòng thủ.</p>
-                <p>Nguyên nhân khiến dòng tiền lớn vẫn e dè một phần bắt nguồn từ áp lực kỹ thuật sau khi các quỹ ETF Bitcoin bị rút ròng hơn 4,4 tỷ USD trong tháng qua. Đồng thời, thị trường trong nước cũng đang đổ dồn sự chú ý vào quy định khấu trừ thuế giao dịch tài sản số bắt đầu áp dụng từ ngày 01/07.</p>
-                <table class="finance-table">
-                    <thead>
-                        <tr>
-                            <th>Tài sản số</th>
-                            <th>Giá (USD)</th>
-                            <th>Tâm lý thị trường</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><b>Bitcoin (BTC)</b></td>
-                            <td>59.859 USD</td>
-                            <td class="down-price">Sợ hãi tột độ (15/100)</td>
-                        </tr>
-                        <tr>
-                            <td><b>Ethereum (ETH)</b></td>
-                            <td>1.585 USD</td>
-                            <td class="up-price">▲ Hồi phục nhẹ 0.78%</td>
-                        </tr>
-                    </tbody>
-                </table>
-            `,
-            chart: `
-                <div class="chart-container">
-                    <div class="chart-title">Biểu đồ tích lũy hình nêm của Bitcoin (BTC/USD)</div>
-                    <svg width="100%" height="120" viewBox="0 0 300 100">
-                        <path d="M10,30 L60,70 L110,40 L160,65 L210,50 L260,55 L290,52" fill="none" stroke="#f57c00" stroke-width="2"/>
-                        <line x1="10" y1="25" x2="290" y2="50" stroke="#888" stroke-dasharray="4"/>
-                        <line x1="10" y1="75" x2="290" y2="55" stroke="#888" stroke-dasharray="4"/>
-                        <text x="10" y="20" fill="#f57c00" font-size="10">Mốc kháng cự 60,000 USD</text>
-                    </svg>
-                </div>
-            `,
-            tip: "Thị trường Crypto biến động mạnh cần một kết nối mạng ổn định cao để xử lý lệnh kịp thời không bị trễ giá.",
-            link: "https://shopee.vn",
-            linkText: "👉 Sắm Thiết Bị Kích Sóng Wi-Fi Tốc Độ Cao Cho Nhà Đầu Tư"
-        },
-        {
-            type: "tech",
-            title: "Cảnh Báo: Giá Điện Thoại Và Máy Tính Năm 2026 Dự Kiến Tăng Mạnh Do Linh Kiện AI",
-            content: "<p>Nếu bạn đang có ý định nâng cấp điện thoại thông minh hay laptop mới, hãy cân nhắc thật kỹ. Theo ghi nhận cuối tháng 6/2026, giá thiết bị phần cứng đang tăng vọt 10% - 15% do chi phí đúc chip AI trên tiến trình 2nm/3nm ngày càng đắt đỏ và chuỗi vật liệu bán dẫn bị khan hiếm nặng.</p>",
-            chart: "",
-            tip: "Để bảo vệ thiết bị hiện tại vượt qua thời kỳ bão giá phần cứng, hãy trang bị ngay các loại phụ kiện chống va đập chất lượng cao.",
-            link: "https://shopee.vn",
-            linkText: "👉 Săn mã giảm giá Ốp Lưng Xịn trên Shopee ngay hôm nay"
-        }
-    ];
-
-    function generateNews() {
-        // Xoay vòng lấy ngẫu nhiên nội dung tin tức tài chính - công nghệ
-        const randomIndex = Math.floor(Math.random() * newsDatabase.length);
-        const item = newsDatabase[randomIndex];
+    <div class="container">
+        <div class="btn-action-container">
+            <button class="btn-refresh" onclick="loadAutomatedNews()">🔄 Đổi Tin Tức Khác</button>
+        </div>
         
-        // Cập nhật mốc thời gian thực động
-        const now = new Date();
-        const timeString = `Cập nhật hệ thống: ${now.getHours()}:${now.getMinutes()} - Ngày ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+        <!-- Khu vực hiển thị tin tức đã sửa lỗi -->
+        <div class="news-list" id="newsContent">
+            <!-- JavaScript sẽ tự động chèn các thẻ bài viết vào đây -->
+        </div>
+    </div>
 
-        // Dựng cấu trúc giao diện hiển thị bài viết
-        const htmlContent = `
-            <div class="article-box">
-                <span class="time-stamp">⏱ ${timeString}</span>
-                <h2>${item.title}</h2>
-    
+    <div class="btn-back-container">
+        <a href="index.html" class="btn-back">← Về trang chủ</a>
+    </div>
+
+    <script>
+        // Kho dữ liệu tin tức tự động dự phòng (Tránh lỗi API bị sập hoặc trống trang)
+        const backupNewsData = [
+            { title: "Kỷ nguyên AI bùng nổ mạnh mẽ trong năm nay", desc: "Các mô hình ngôn ngữ lớn liên tục tối ưu hóa hiệu năng, giúp tự động hóa 70% công việc lập trình và thiết kế giao diện web cơ bản.", tag: "CÔNG NGHỆ", time: "Vừa xong" },
+            { title: "Thị trường bất động sản ghi nhận dấu hiệu phục hồi", desc: "Lượng giao dịch đất nền phân khúc giá rẻ tăng nhẹ tại các khu vực vùng ven đô thị nhờ lãi suất ngân hàng duy trì ở mức ổn định.", tag: "TÀI CHÍNH", time: "15 phút trước" },
+            { title: "Ra mắt thế hệ vi xử lý máy tính mới tiết kiệm điện", desc: "Chip kiến trúc mới giúp tăng tốc xử lý tác vụ đồ họa hạt nhân lên 45% nhưng tiêu thụ năng lượng ít hơn một nửa.", tag: "CÔNG NGHỆ", time: "42 phút trước" },
+            { title: "Xu hướng đầu tư tài sản số chuyển dịch sang tính ổn định", desc: "Giới đầu tư toàn cầu bắt đầu ưu tiên các quỹ tài chính có bảo chứng an toàn thay vì chạy theo các đợt sóng đầu cơ mạo hiểm.", tag: "TÀI CHÍNH", time: "1 giờ trước" },
+            { title: "Hệ thống hiển thị không gian vũ trụ được giả lập thành công", desc: "Các nhà khoa học sử dụng siêu máy tính lượng tử để dựng lại mô hình vụ nổ tinh vân với độ chi tiết siêu cao.", tag: "KHOA HỌC", time: "2 giờ trước" },
+            { title: "Ứng dụng công nghệ blockchain vào quản lý chuỗi cung ứng", desc: "Giải pháp giúp minh bạch hóa 100% nguồn gốc xuất xứ hàng hóa, giảm thiểu chi phí vận hành kho bãi cho doanh nghiệp.", tag: "CÔNG NGHỆ", time: "3 giờ trước" }
+        ];
+
+        function loadAutomatedNews() {
+            const container = document.getElementById("newsContent");
+            container.innerHTML = ""; // Xóa nội dung cũ trước khi nạp tin mới
+
+            // Trộn ngẫu nhiên mảng tin tức để tạo hiệu ứng "Đổi tin tức khác"
+            const shuffledNews = [...backupNewsData].sort(() => 0.5 - Math.random());
+            
+            // Lấy ngẫu nhiên 3-4 bài viết để hiển thị mỗi lần bấm nút
+            const selectedNews = shuffledNews.slice(0, 4);
+
+            selectedNews.forEach(item => {
+                const card = document.createElement("a");
+                card.href = "#"; // Bạn có thể cấu hình link chi tiết bài viết tại đây
+                card.className = "news-card";
+                
+                card.innerHTML = `
+                    <div class="news-tag">${item.tag}</div>
+                    <div class="news-title">${item.title}</div>
+                    <div class="news-desc">${item.desc}</div>
+                    <div class="news-time">${item.time}</div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Tự động chạy lần đầu tiên khi người dùng vừa truy cập vào trang web
+        window.onload = loadAutomatedNews;
+    </script>
+</body>
+</html>
