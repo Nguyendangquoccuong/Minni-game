@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sản Phẩm Gợi Ý - MINNI WORLD</title>
+<style>
+    body {
+        margin: 0; padding: 20px 10px; background-color: #0b0c10; color: #eee;
+        font-family: Arial, sans-serif; text-align: center;
+    }
+    h1 { color: #ffeb3b; font-size: 24px; margin-bottom: 5px; }
+    p { color: #aaa; font-size: 13px; margin-bottom: 25px; }
+    .product-list { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    
+    /* Ô hiển thị sản phẩm hàng ngang tối giản */
+    .product-item {
+        width: 100%; max-width: 340px; padding: 12px;
+        background-color: #1f2833; border: 1px solid #333; border-radius: 12px;
+        display: flex; align-items: center; text-align: left; box-sizing: border-box;
+    }
+    .prod-img {
+        width: 65px; height: 65px; object-fit: cover; border-radius: 8px;
+        margin-right: 12px; background-color: #0b0c10; flex-shrink: 0;
+    }
+    .prod-info { flex-grow: 1; }
+    .prod-info h3 { margin: 0 0 4px 0; font-size: 14px; color: white; }
+    .prod-info .price { color: #ff5722; font-weight: bold; font-size: 14px; margin-bottom: 5px; }
+    
+    .btn-buy {
+        display: inline-block; padding: 6px 12px; background-color: #ff5722;
+        color: white; font-size: 11px; font-weight: bold; text-decoration: none;
+        border-radius: 15px; text-align: center;
+    }
+    .btn-buy:active { background-color: #e64a19; }
+    .btn-back { display: inline-block; margin-top: 30px; color: #66fcf1; text-decoration: none; font-size: 13px; }
+</style>
+</head>
+<body>
+
+    <h1>🛒 SẢN PHẨM KHUYÊN DÙNG</h1>
+    <p>Tổng hợp các món đồ chất lượng giá tốt nhất dành cho bạn</p>
+
+    <div class="product-list">
+        
+        <!-- Sản phẩm 1 -->
+        <div class="product-item">
+            <img src="background.png" class="prod-img" alt="Tai nghe">
+            <div class="prod-info">
+                <h3>🎧 Tai Nghe Gaming Không Dây</h3>
+                <div class="price">150.000 đ</div>
+                <!-- Thay link shopee/lazada chứa mã tiếp thị của bạn vào href -->
+                <a href="https://shopee.vn" target="_blank" class="btn-buy">MUA TRÊN SHOPEE ➔</a>
+            </div>
+        </div>
+
+        <!-- Sản phẩm 2 -->
+        <div class="product-item">
+            <img src="background.png" class="prod-img" alt="Bàn phím">
+            <div class="prod-info">
+                <h3>⌨️ Bàn Phím Cơ Mini RGB</h3>
+                <div class="price">290.000 đ</div>
+                <a href="https://shopee.vn" target="_blank" class="btn-buy">MUA TRÊN SHOPEE ➔</a>
+            </div>
+        </div>
+
+    </div>
+
+    <br>
+    <a href="index.html" class="btn-back">⬅ Quay lại trang chủ</a>
+
+</body>
+</html>
