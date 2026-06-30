@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flappy Bird</title>
+    <style>
+        body { margin: 0; background-color: #0b0c16; color: white; font-family: Arial, sans-serif; text-align: center; }
+        canvas { background-color: #70c5ce; display: block; margin: 20px auto; border: 2px solid #29b6f6; border-radius: 10px; }
+        .btn-back { display: inline-block; padding: 10px 20px; background-color: #333; color: white; text-decoration: none; border-radius: 20px; }
+        p { font-size: 14px; color: #aaa; }
+    </style>
+</head>
+<body>
+    <canvas id="birdCanvas" width="320" height="400"></canvas>
+    <p>Chạm tay vào màn hình game để giúp chim bay lên!</p>
+    <a href="mini-game.html" class="btn-back">⬅ Quay lại danh sách</a>
+
+    <script>
+        const canvas = document.getElementById("birdCanvas");
+        const ctx = canvas.getContext("2d");
+        let birdY = 200, velocity = 0, gravity = 0.4, score = 0;
+        let pipes = [{ x: 320, top: 100, bottom: 220 }];
+
+        canvas.addEventListener("click", () => velocity = -6);
+
+        function draw() {
+            ctx.fillStyle = "#70c5ce"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "yellow"; ctx.fillRect(50, birdY, 20, 20); // Vẽ chim
+
+            velocity += gravity; birdY += velocity;
+
+            for (let i = 0; i < pipes.length; i++) {
+                ctx.fillStyle = "green";
+                ctx.fillRect(pipes[i].x, 0, 40, pipes[i].top);
+                ctx.fillRect(pipes[i].x, pipes[i].bottom, 40, canvas.height - pipes[i].bottom);
+                pipes[i].x -= 2;
+
+                if (pipes[i].x === 120) pipes.push({ x: 320, top: Math.random() * 150 + 50, bottom: 0 });
+                pipes[i].bottom = pipes[i].top + 110; // Khoảng trống giữa 2 ống
+
+                // Kiểm tra va chạm
+                if ((pipes[i].x < 70 && pipes[i].x > 10) && (birdY < pipes[i].top || birdY > pipes[i].bottom - 20) || birdY > canvas.height) {
+                    alert("Thua rồi! Điểm: " + score); location.reload();
+                }
+                if (pipes[i].x === 50) score++;
+            }
+            if (pipes[0].x < -40) pipes.shift();
+            ctx.fillStyle = "white"; ctx.font = "20px Arial"; ctx.fillText("Điểm: " + score, 10, 30);
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
+</body>
+</html>
 
