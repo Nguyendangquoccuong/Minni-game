@@ -60,6 +60,16 @@
         text-shadow: 0 0 10px rgba(69, 243, 255, 0.3);
     }
     .banner-card p { font-size: 15px; color: #c5a880; margin: 0 0 25px 0; line-height: 1.5; }
+    
+    /* CSS cho hình ảnh hiển thị đẹp hơn */
+    .web-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin: 15px 0;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
     .cta-group { margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
     .btn {
         padding: 10px 24px; font-weight: bold; border-radius: 30px; text-decoration: none;
@@ -97,6 +107,10 @@
         <div class="banner-card">
             <h1>CHÀO MỪNG ĐẾN VỚI MINNI WORLD</h1>
             <p>Khám phá thế giới giải trí, tin tức việc làm & công cụ tiện ích miễn phí</p>
+            
+            <!-- ĐÃ THÊM: Thẻ gọi ảnh banner hiển thị ở đây -->
+            <img src="background.png" alt="Minni World Banner" class="web-image">
+            
             <div class="cta-group">
                 <a href="mini-game.html" class="btn btn-primary">Chơi Game Ngay 🎮</a>
                 <a href="banhang.html" class="btn btn-secondary">Ghé Cửa Hàng 🛍️</a>
@@ -107,6 +121,10 @@
         </div>
         <div class="funny-story">
             <p style="color: #ffaa00; font-weight: bold; margin-top: 0; margin-bottom: 20px; font-size: 19px;">Góc giải trí: Con gà khôn hơn cáo 🐔🦊</p>
+            
+            <!-- ĐÃ THÊM: Thẻ gọi ảnh cho phần truyện vui con gà (bạn đổi tên file thành tên ảnh con gà bạn đã tải lên nhé) -->
+            <img src="background.png" alt="Truyện vui Con gà khôn hơn cáo" class="web-image">
+            
             <p style="font-size: 14px; color: #aaa; margin: 10px 0 0 0; font-style: italic;">Nhấn vào mục tin tức để xem chi tiết câu chuyện...</p>
         </div>
     </div>
